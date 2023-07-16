@@ -1,13 +1,23 @@
 ---
 title: "一些其他概念不严谨的补充"
-description: 
+
+description:
+
 date: 2023-07-16T17:21:15+08:00
-image: 
-math: 
-license: 
+
+math:
+
+license:
+
 hidden: false
+
 comments: true
-draft: true
+
+draft: false
+
+tags: ["计算机网络微课堂笔记"]
+
+categories: ["计算机网络"]
 ---
 
 ## DNS污染
@@ -99,9 +109,9 @@ https://zhuanlan.zhihu.com/p/468184471
 
 这些信息通常会被收集并处理成特征向量，然后输入到一些机器学习模型（例如SVM、决策树、深度学习等）进行训练和预测。这样可以自动化地识别出各种特定的流量类型或行为模式。
 
-"Deep Packet Inspection (DPI) for *** Encrypted Traffic with Deep Learning Models"
+- Deep Packet Inspection (DPI) for *** Encrypted Traffic with Deep Learning Models
 
-"Automated Identification of *** Traffic with machine learning techniques"，
+- Automated Identification of *** Traffic with machine learning techniques
 
 ## https
 因为http是明文的数据 所以还是存在被防火墙探测的风险 想要将http流量进行加密的话又需要引入tls 让它成为https流量
