@@ -1,0 +1,295 @@
+<!doctype html><html lang=zh-cn dir=ltr><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="软件版本 kafka_2.12-2.4.0.tgz（带zookeeper） 服务端部署 修改kafka配置文件 server.properties vim /data/kafka/config/server.properties: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15"><title>kafka 基础配置</title><link rel=canonical href=https://blog.importzhh.me/p/kafka-%E5%9F%BA%E7%A1%80%E9%85%8D%E7%BD%AE/><link rel=stylesheet href=/scss/style.min.0d8902b26558cddb5286ea49f2a7aadd5761ed898547e29e5ab572d8c0619ba6.css><meta property="og:title" content="kafka 基础配置"><meta property="og:description" content="软件版本 kafka_2.12-2.4.0.tgz（带zookeeper） 服务端部署 修改kafka配置文件 server.properties vim /data/kafka/config/server.properties: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15"><meta property="og:url" content="https://blog.importzhh.me/p/kafka-%E5%9F%BA%E7%A1%80%E9%85%8D%E7%BD%AE/"><meta property="og:site_name" content="importzhh的小破站"><meta property="og:type" content="article"><meta property="article:section" content="Post"><meta property="article:tag" content="kafka"><meta property="article:published_time" content="2023-09-03T16:09:47+08:00"><meta property="article:modified_time" content="2023-09-03T16:09:47+08:00"><meta name=twitter:title content="kafka 基础配置"><meta name=twitter:description content="软件版本 kafka_2.12-2.4.0.tgz（带zookeeper） 服务端部署 修改kafka配置文件 server.properties vim /data/kafka/config/server.properties: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15"><link rel="shortcut icon" href=/favicon.ico></head><body class=article-page><script>(function(){const e="StackColorScheme";localStorage.getItem(e)||localStorage.setItem(e,"auto")})()</script><script>(function(){const t="StackColorScheme",e=localStorage.getItem(t),n=window.matchMedia("(prefers-color-scheme: dark)").matches===!0;e=="dark"||e==="auto"&&n?document.documentElement.dataset.scheme="dark":document.documentElement.dataset.scheme="light"})()</script><div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky"><button class="hamburger hamburger--spin" type=button id=toggle-menu aria-label=切换菜单>
+<span class=hamburger-box><span class=hamburger-inner></span></span></button><header><figure class=site-avatar><a href=/><img src=/img/avatar_huce6e906a97de2553354850eae15a0392_8624_300x0_resize_box_3.png width=300 height=300 class=site-logo loading=lazy alt=Avatar></a>
+<span class=emoji>🍥</span></figure><div class=site-meta><h1 class=site-name><a href=/>importzhh的小破站</a></h1><h2 class=site-description>实事求是 思危思退思变</h2></div></header><ol class=social-menu><li><a href=https://github.com/importzhh target=_blank title=GitHub rel=me><svg width="800" height="800" viewBox="-1.65 0 259.3 259.3" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid"><g><path fill="#9edcf2" d="M200.9 199.8c0 13.9-32.2 25.1-71.9 25.1-39.7.0-71.9-11.3-71.9-25.1.0-13.9 32.2-25.1 71.9-25.1C168.7 174.7 200.9 185.9 200.9 199.8zm0 0"/><g><defs><path id="SVGID_1_" d="M98.1 244.8c1.6 7.5 5.5 11.9 9.4 14.5h41.1c5-3.4 10.1-9.8 10.1-21.8v-31s.6-7.7 7.7-10.2c0 0 4.1-2.9-.3-4.5.0.0-19.5-1.6-19.5 14.4v23.6s.8 8.7-3.8 12.3v-29.2s.3-9.3 5.1-12.8c0 0 3.2-5.7-3.8-4.2.0.0-13.4 1.9-14 17.6l-.3 30h-3.2l-.3-30c-.6-15.6-14-17.6-14-17.6-7-1.6-3.8 4.2-3.8 4.2 4.8 3.5 5.1 12.8 5.1 12.8v29.5c-4.6-3.3-3.8-12.6-3.8-12.6v-23.6c0-16-19.5-14.4-19.5-14.4-4.5 1.6-.3 4.5-.3 4.5 7 2.6 7.7 10.2 7.7 10.2v21.7L98.1 244.8z"/></defs><clipPath id="SVGID_2_"><use xlink:href="#SVGID_1_" overflow="visible"/></clipPath><path clip-path="url(#SVGID_2_)" fill="#7dbce7" d="M200.9 199.8c0 13.9-32.2 25.1-71.9 25.1-39.7.0-71.9-11.3-71.9-25.1.0-13.9 32.2-25.1 71.9-25.1C168.7 174.7 200.9 185.9 200.9 199.8zm0 0"/></g><path fill="#9edcf2" d="M46.9 125.9l-2.1 7.2s-.5 2.6 1.9 3.1c2.6-.1 2.4-2.5 2.2-3.2L46.9 125.9zm0 0"/><path fill="#010101" d="M255.8 95.6l.2-.9c-21.1-4.2-42.7-4.3-55.8-3.7 2.1-7.7 2.8-16.7 2.8-26.6.0-14.3-5.4-25.7-14-34.3 1.5-4.9 3.5-15.8-2-29.7.0.0-9.8-3.1-32.1 11.8-8.7-2.2-18-3.3-27.3-3.3-10.2.0-20.5 1.3-30.2 3.9C74.4-2.9 64.3.3 64.3.3c-6.6 16.5-2.5 28.8-1.3 31.8-7.8 8.4-12.5 19.1-12.5 32.2.0 9.9 1.1 18.8 3.9 26.5-13.2-.5-34-.3-54.4 3.8l.2.9c20.4-4.1 41.4-4.2 54.5-3.7.6 1.6 1.3 3.2 2 4.7-13 .4-35.1 2.1-56.3 8.1l.3.9c21.4-6 43.7-7.6 56.6-8 7.8 14.4 23 23.8 50.2 26.7-3.9 2.6-7.8 7-9.4 14.5-5.3 2.5-21.9 8.7-31.9-8.5.0.0-5.6-10.2-16.3-11 0 0-10.4-.2-.7 6.5.0.0 6.9 3.3 11.7 15.6.0.0 6.3 21 36.4 14.2V177s-.6 7.7-7.7 10.2c0 0-4.2 2.9.3 4.5.0.0 19.5 1.6 19.5-14.4v-23.6s-.8-9.4 3.8-12.6v38.8s-.3 9.3-5.1 12.8c0 0-3.2 5.7 3.8 4.2.0.0 13.4-1.9 14-17.6l.3-39.3h3.2l.3 39.3c.6 15.6 14 17.6 14 17.6 7 1.6 3.8-4.2 3.8-4.2-4.8-3.5-5.1-12.8-5.1-12.8v-38.5c4.6 3.6 3.8 12.3 3.8 12.3v23.6c0 16 19.5 14.4 19.5 14.4 4.5-1.6.3-4.5.3-4.5-7-2.6-7.7-10.2-7.7-10.2v-31c0-12.1-5.1-18.5-10.1-21.8 29-2.9 42.9-12.2 49.3-26.8 12.7.3 35.6 1.9 57.4 8.1l.3-.9c-21.7-6.1-44.4-7.7-57.3-8.1.6-1.5 1.1-3 1.6-4.6C212.9 91.4 234.6 91.4 255.8 95.6zm0 0"/><path fill="#f5ccb3" d="M174.6 63.7c6.2 5.7 9.9 12.5 9.9 19.8.0 34.4-25.6 35.3-57.2 35.3S70.1 114 70.1 83.5c0-7.3 3.6-14.1 9.8-19.7 10.3-9.4 27.7-4.4 47.4-4.4 19.7.0 37-5.1 47.3 4.3zm0 0"/><path fill="#fff" d="M108.3 85.3c0 9.5-5.3 17.1-11.9 17.1-6.6.0-11.9-7.7-11.9-17.1.0-9.5 5.3-17.1 11.9-17.1C103 68.1 108.3 75.8 108.3 85.3zm0 0"/><path fill="#af5c51" d="M104.5 85.5c0 6.3-3.6 11.4-7.9 11.4-4.4.0-7.9-5.1-7.9-11.4.0-6.3 3.6-11.4 7.9-11.4S104.5 79.2 104.5 85.5zm0 0"/><path fill="#fff" d="M172.2 85.3c0 9.5-5.3 17.1-11.9 17.1s-11.9-7.7-11.9-17.1c0-9.5 5.3-17.1 11.9-17.1C166.8 68.1 172.2 75.8 172.2 85.3zm0 0"/><path fill="#af5c51" d="M168.3 85.5c0 6.3-3.6 11.4-7.9 11.4-4.4.0-7.9-5.1-7.9-11.4.0-6.3 3.6-11.4 7.9-11.4C164.8 74.1 168.3 79.2 168.3 85.5zm0 0"/><path fill="#af5c51" d="M130.5 100.5c0 1.6-1.3 3-3 3-1.6.0-3-1.3-3-3s1.3-3 3-3c1.59999999999999.0 3 1.3 3 3zm0 0"/><path fill="#af5c51" d="M120.6 108c-.2-.5.1-1 .6-1.2s1 .1 1.2.6c.8 2.2 2.8 3.6 5.1 3.6s4.3-1.5 5.1-3.6c.2-.5.7-.8 1.2-.6s.8.7.6 1.2c-1 2.9-3.8 4.9-6.9 4.9C124.4 112.9 121.6 110.9 120.6 108zm0 0"/><path fill="#c4e5d9" d="M54.5 121.6c0 .8-.9 1.4-2.1 1.4-1.1.0-2.1-.6-2.1-1.4.0-.8.9-1.4 2.1-1.4C53.6 120.2 54.5 120.8 54.5 121.6zm0 0"/><path fill="#c4e5d9" d="M60.3 124.8c0 .8-.9 1.4-2.1 1.4-1.1.0-2.1-.6-2.1-1.4.0-.8.9-1.4 2.1-1.4C59.4 123.4 60.3 124 60.3 124.8zm0 0"/><path fill="#c4e5d9" d="M63.8 129c0 .8-.9 1.4-2.1 1.4-1.1.0-2.1-.6-2.1-1.4s.9-1.4 2.1-1.4C62.9 127.5 63.8 128.2 63.8 129zm0 0"/><path fill="#c4e5d9" d="M67 133.8c0 .8-.9 1.4-2.1 1.4-1.1.0-2.1-.6-2.1-1.4s.9-1.4 2.1-1.4C66.1 132.3 67 133 67 133.8zm0 0"/><path fill="#c4e5d9" d="M70.5 138.2c0 .8-.9 1.4-2.1 1.4-1.1.0-2.1-.6-2.1-1.4s.9-1.4 2.1-1.4C69.6 136.8 70.5 137.4 70.5 138.2zm0 0"/><path fill="#c4e5d9" d="M75.3 142.1c0 .8-.9 1.4-2.1 1.4-1.1.0-2.1-.6-2.1-1.4s.9-1.4 2.1-1.4C74.4 140.6 75.3 141.3 75.3 142.1zm0 0"/><path fill="#c4e5d9" d="M82 144.6c0 .8-.9 1.4-2.1 1.4-1.1.0-2.1-.6-2.1-1.4s.9-1.4 2.1-1.4S82 143.8 82 144.6zm0 0"/><path fill="#c4e5d9" d="M88.7 144.6c0 .8-.9 1.4-2.1 1.4-1.1.0-2.1-.6-2.1-1.4s.9-1.4 2.1-1.4S88.7 143.8 88.7 144.6zm0 0"/><path fill="#c4e5d9" d="M95.5 143.5c0 .8-.9 1.4-2.1 1.4-1.1.0-2.1-.6-2.1-1.4s.9-1.4 2.1-1.4C94.5 142.1 95.5 142.7 95.5 143.5zm0 0"/></g></svg></a></li></ol><ol class=menu id=main-menu><li><a href=/><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><polyline points="5 12 3 12 12 3 21 12 19 12"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/><path d="M9 21v-6a2 2 0 012-2h2a2 2 0 012 2v6"/></svg><span>Home</span></a></li><li><a href=/archives/><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><rect x="3" y="4" width="18" height="4" rx="2"/><path d="M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8"/><line x1="10" y1="12" x2="14" y2="12"/></svg><span>Archives</span></a></li><li><a href=/search/><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="10" cy="10" r="7"/><line x1="21" y1="21" x2="15" y2="15"/></svg><span>Search</span></a></li><li><a href=/links/><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M10 14a3.5 3.5.0 005 0l4-4a3.5 3.5.0 00-5-5l-.5.5"/><path d="M14 10a3.5 3.5.0 00-5 0l-4 4a3.5 3.5.0 005 5l.5-.5"/></svg><span>Links</span></a></li><div class=menu-bottom-section><li id=dark-mode-toggle><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="8" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="16" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg><span>暗色模式</span></li></div></ol></aside><aside class="sidebar right-sidebar sticky"><section class="widget archives"><div class=widget-icon><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><line x1="5" y1="9" x2="19" y2="9"/><line x1="5" y1="15" x2="19" y2="15"/><line x1="11" y1="4" x2="7" y2="20"/><line x1="17" y1="4" x2="13" y2="20"/></svg></div><h2 class="widget-title section-title">目录</h2><div class=widget--toc><nav id=TableOfContents><ol><li><a href=#软件版本>软件版本</a></li><li><a href=#服务端部署>服务端部署</a><ol><li><a href=#修改kafka配置文件-serverproperties>修改kafka配置文件 server.properties</a></li><li><a href=#添加sasl配置文件>添加SASL配置文件</a></li><li><a href=#24-修改启动脚本>2.4 修改启动脚本</a></li><li><a href=#25-启动kafka服务>2.5 启动kafka服务</a></li></ol></li><li><a href=#kafka客户端配置登录认证>kafka客户端配置登录认证</a><ol><li><a href=#创建客户端认证配置文件>创建客户端认证配置文件</a></li></ol></li></ol></nav></div></section></aside><main class="main full-width"><article class=main-article><header class=article-header><div class=article-details><header class=article-category><a href=/categories/%E5%9F%BA%E7%BA%BF%E9%85%8D%E7%BD%AE/>基线配置</a></header><div class=article-title-wrapper><h2 class=article-title><a href=/p/kafka-%E5%9F%BA%E7%A1%80%E9%85%8D%E7%BD%AE/>kafka 基础配置</a></h2></div><footer class=article-time><div><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M11.795 21H5a2 2 0 01-2-2V7a2 2 0 012-2h12a2 2 0 012 2v4"/><circle cx="18" cy="18" r="4"/><path d="M15 3v4"/><path d="M7 3v4"/><path d="M3 11h16"/><path d="M18 16.496V18l1 1"/></svg><time class=article-time--published>Sep 03, 2023</time></div><div><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg><time class=article-time--reading>阅读时长: 5 分钟</time></div></footer></div></header><section class=article-content><h2 id=软件版本>软件版本</h2><p><a class=link href=http://archive.apache.org/dist/kafka/2.4.0/kafka_2.12-2.4.0.tgz target=_blank rel=noopener>kafka_2.12-2.4.0.tgz（带zookeeper）</a></p><h2 id=服务端部署>服务端部署</h2><h3 id=修改kafka配置文件-serverproperties>修改kafka配置文件 server.properties</h3><p><strong>vim /data/kafka/config/server.properties:</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>  1
+</span><span class=lnt>  2
+</span><span class=lnt>  3
+</span><span class=lnt>  4
+</span><span class=lnt>  5
+</span><span class=lnt>  6
+</span><span class=lnt>  7
+</span><span class=lnt>  8
+</span><span class=lnt>  9
+</span><span class=lnt> 10
+</span><span class=lnt> 11
+</span><span class=lnt> 12
+</span><span class=lnt> 13
+</span><span class=lnt> 14
+</span><span class=lnt> 15
+</span><span class=lnt> 16
+</span><span class=lnt> 17
+</span><span class=lnt> 18
+</span><span class=lnt> 19
+</span><span class=lnt> 20
+</span><span class=lnt> 21
+</span><span class=lnt> 22
+</span><span class=lnt> 23
+</span><span class=lnt> 24
+</span><span class=lnt> 25
+</span><span class=lnt> 26
+</span><span class=lnt> 27
+</span><span class=lnt> 28
+</span><span class=lnt> 29
+</span><span class=lnt> 30
+</span><span class=lnt> 31
+</span><span class=lnt> 32
+</span><span class=lnt> 33
+</span><span class=lnt> 34
+</span><span class=lnt> 35
+</span><span class=lnt> 36
+</span><span class=lnt> 37
+</span><span class=lnt> 38
+</span><span class=lnt> 39
+</span><span class=lnt> 40
+</span><span class=lnt> 41
+</span><span class=lnt> 42
+</span><span class=lnt> 43
+</span><span class=lnt> 44
+</span><span class=lnt> 45
+</span><span class=lnt> 46
+</span><span class=lnt> 47
+</span><span class=lnt> 48
+</span><span class=lnt> 49
+</span><span class=lnt> 50
+</span><span class=lnt> 51
+</span><span class=lnt> 52
+</span><span class=lnt> 53
+</span><span class=lnt> 54
+</span><span class=lnt> 55
+</span><span class=lnt> 56
+</span><span class=lnt> 57
+</span><span class=lnt> 58
+</span><span class=lnt> 59
+</span><span class=lnt> 60
+</span><span class=lnt> 61
+</span><span class=lnt> 62
+</span><span class=lnt> 63
+</span><span class=lnt> 64
+</span><span class=lnt> 65
+</span><span class=lnt> 66
+</span><span class=lnt> 67
+</span><span class=lnt> 68
+</span><span class=lnt> 69
+</span><span class=lnt> 70
+</span><span class=lnt> 71
+</span><span class=lnt> 72
+</span><span class=lnt> 73
+</span><span class=lnt> 74
+</span><span class=lnt> 75
+</span><span class=lnt> 76
+</span><span class=lnt> 77
+</span><span class=lnt> 78
+</span><span class=lnt> 79
+</span><span class=lnt> 80
+</span><span class=lnt> 81
+</span><span class=lnt> 82
+</span><span class=lnt> 83
+</span><span class=lnt> 84
+</span><span class=lnt> 85
+</span><span class=lnt> 86
+</span><span class=lnt> 87
+</span><span class=lnt> 88
+</span><span class=lnt> 89
+</span><span class=lnt> 90
+</span><span class=lnt> 91
+</span><span class=lnt> 92
+</span><span class=lnt> 93
+</span><span class=lnt> 94
+</span><span class=lnt> 95
+</span><span class=lnt> 96
+</span><span class=lnt> 97
+</span><span class=lnt> 98
+</span><span class=lnt> 99
+</span><span class=lnt>100
+</span><span class=lnt>101
+</span><span class=lnt>102
+</span><span class=lnt>103
+</span><span class=lnt>104
+</span><span class=lnt>105
+</span><span class=lnt>106
+</span><span class=lnt>107
+</span><span class=lnt>108
+</span><span class=lnt>109
+</span><span class=lnt>110
+</span><span class=lnt>111
+</span><span class=lnt>112
+</span><span class=lnt>113
+</span><span class=lnt>114
+</span><span class=lnt>115
+</span><span class=lnt>116
+</span><span class=lnt>117
+</span><span class=lnt>118
+</span><span class=lnt>119
+</span><span class=lnt>120
+</span><span class=lnt>121
+</span><span class=lnt>122
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl># Kafka broker的唯一标识符，每个broker在集群中必须有个唯一的ID。
+</span></span><span class=line><span class=cl>broker.id=0
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl># 监听相关参数
+</span></span><span class=line><span class=cl>1steners SASLPLAINTEXT://192.168.1.131:9092 
+</span></span><span class=line><span class=cl>advertised.1fsteners=SASL_PLAINTEXT://192.168.1.131:9092 
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl># 主题相关参数
+</span></span><span class=line><span class=cl># 禁止自动创建主题
+</span></span><span class=line><span class=cl>auto.create.topics.enable=false  
+</span></span><span class=line><span class=cl># 启用删除topic功能
+</span></span><span class=line><span class=cl>delete.topic.enable=true
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl># 默认值1。当该副本所在的brker机，consumer_offsets 只有一份副本，该分区岩机。使用该分区存储消费分组offset位置的消费者均会收到影响，offset无法提交，从而导致生产者可以发送消息但消费者不可用。所以需要设置该字段的值大于1
+</span></span><span class=line><span class=cl>offsets.topic.replication.factor=3
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl># 事务主题的复制因子(设置更高一确保可用性) 设置为节点数 内部主题创建将失败，直到集群大小满足此复制因素要求
+</span></span><span class=line><span class=cl>transaction.state.log.replication.factor=3 
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl># 覆盖事务主题的min.insync.replicas配置。设置为(节点数+1)/2
+</span></span><span class=line><span class=cl>transaction.state.log.min.isr=2
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl># Kafka ISR 列表中最小同步副本数。设置为(节点数+1)/2 
+</span></span><span class=line><span class=cl>min.insync.replicas=2
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl># 事务最大超时时间默认60000ms
+</span></span><span class=line><span class=cl>transaction.max.timeout.ms=900000
+</span></span><span class=line><span class=cl># 默认副本因子
+</span></span><span class=line><span class=cl>default.replication.factor=3
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl># 线程相关参数
+</span></span><span class=line><span class=cl># 后台处理任务的线程数，如果不出问题，默认不修改默认10
+</span></span><span class=line><span class=cl>background.threads=10
+</span></span><span class=line><span class=cl># 处理磁盘IO的线程数量 默认8
+</span></span><span class=line><span class=cl>num.io.threads=8
+</span></span><span class=line><span class=cl># 处理网络请求的线程数量 默认3 
+</span></span><span class=line><span class=cl>num.network.threads=
+</span></span><span class=line><span class=cl># 在启动时用于日志恢复和在关闭时刷新的每个数据目录的线程数默认1
+</span></span><span class=line><span class=cl>num.recovery.threads.per.data.dir=1
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl># 用于复制来自源代理的消息线程的数量 默认1 增加该值可以增加 follower broker 中的 I/O 平行度的程度。 
+</span></span><span class=line><span class=cl>queued.max.requests=500 
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl># 默认值500 用于控制生产者在发送请求的时候可以排队等待的最大请求数量 如果生产者发送请求的速度超过了服务器处理请求的速度，未发送的请求将积压在生产者的队列中 
+</span></span><span class=line><span class=cl>queued.max.requests=500
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl># 发送套接字的缓冲区大小 
+</span></span><span class=line><span class=cl>socket.send.buffer.bytes=104857600 
+</span></span><span class=line><span class=cl># 接受套接字的缓冲区大小
+</span></span><span class=line><span class=cl>socket.receive.buffer.bytes=104857600 
+</span></span><span class=line><span class=cl># 请求套接字的缓冲区大小
+</span></span><span class=line><span class=cl>socket.request.max.bytes=104857600
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>#压缩相关参数 默认producer 意为和producer端的压缩格式保持一致 
+</span></span><span class=line><span class=cl>compression.type=producer
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl># zookeeper相关参数
+</span></span><span class=line><span class=cl>zookeeper.connection.timeout.ms=6000
+</span></span><span class=line><span class=cl>zockeeper.sync.time.ms=2000 zookeeper.connect=192.168.1.112:2181,192.168.1.111:2181,192.168.1.110:2181/kafka
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl># 重平衡相关参数
+</span></span><span class=line><span class=cl># Unclean Leader Election指在Kafka集群leader节点失败时,新选举出来的leader节点可能还没有获得全部partition的最新offset数据,这时候新leader就是一个“脏”leader。
+</span></span><span class=line><span class=cl># 正常情况下,Kafka会等待新leader从其他副本那里同步完毕数据后,才会开始作为leader提供服务。
+</span></span><span class=line><span class=cl># 但开启脏选举功能后,即使数据同步未完成,新选举出来的leader也会直接开始提供服务,这可能会导致一部分数据丢失。
+</span></span><span class=line><span class=cl>unclean.leader.election.enable=false 
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl># 禁止自动重平衡
+</span></span><span class=line><span class=cl>auto.leader.rebalance.enable=false
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl># 检查各个分区是否平衡的频率 默认300s
+</span></span><span class=line><span class=cl>leader.imbalance.check.interval.seconds=30 
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl># 触发重平衡的阈值百分比 默认为10
+</span></span><span class=line><span class=cl>group.initial.rebalance.delay.ms=10000
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl># 日志刷写相关参数 暂不更改
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>log.dirs=/applog/kafka/logs
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl># segment文件保备的最长时间，超时将被删除 默认7天168 
+</span></span><span class=line><span class=cl>log.retention.hours=168
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl># 日志滚动切片相关参数
+</span></span><span class=line><span class=cl># 日志滚动的最大时长，默认7天
+</span></span><span class=line><span class=cl>log.roll.hours=48
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl># 给日志段的切分加一个扰动值，默认为0 避免大量日志段在同一时间进行切分操作 如果发现kafka有周期性的磁盘I/O打满情况，建议设置此值。
+</span></span><span class=line><span class=cl>log.roll.jitter.hours=2
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl># 元数据相关参数
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl># 副本相关参数暂不更改
+</span></span><span class=line><span class=cl># 默认值500 follower副本发出的每个获取器请求的最大等待时间。该值在任何时候都应该小于replica.lag.time.max.ms，以防止低吞吐量主题的ISR频繁收缩 
+</span></span><span class=line><span class=cl>replica.fetch.wait.max.ms=500
+</span></span><span class=line><span class=cl># 默认值5000 将高水位保存到磁盘的频率
+</span></span><span class=line><span class=cl>replica.high.watermark.checkpoint.interval.ms=5000
+</span></span><span class=line><span class=cl># 默认值30000 如果follower没有发送任何fetch请求，或者没有消耗leader将从ISR中删除follower 
+</span></span><span class=line><span class=cl>replica.log.time.max.ms=30000
+</span></span><span class=line><span class=cl># 默认值65536 用于网络请求的套接字接收缓冲区 
+</span></span><span class=line><span class=cl>replica.socket.receive.buffer.bvtes=65536
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl># 网络请求的套接字超时。它的值至少应该是 replica.fetch.wait.max.ms 
+</span></span><span class=line><span class=cl>replica.socket.timeout.ms=30000
+</span></span><span class=line><span class=cl># 定义副本节点与领导者leader节点之间的最大复制滞后时间表示在副本节点从领导者节点获取数据之前可以容忍的最大时间延迟 
+</span></span><span class=line><span class=cl>repiica.1aq.time.max.ms=10000
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl># 消息相关参数
+</span></span><span class=line><span class=cl>message.max.bytes=10485760
+</span></span><span class=line><span class=cl>replica.fetch.max.bvtes=10485760
+</span></span><span class=line><span class=cl>log.message.timestamp.type=CreateTime
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl># 默认1000 这个参数暂定 较小的值可以提高请求处理效率但增大清理操作的开销 
+</span></span><span class=line><span class=cl>fetch.purgatory.purge.interval.requests=100
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl># 权限配置
+</span></span><span class=line><span class=cl>allow.everyone.if.no.acl.found=true
+</span></span><span class=line><span class=cl>authorizer.class.name=kafka.security.auth.SimpleAclAuthorizer
+</span></span><span class=line><span class=cl>security.inter.broker.protocol=SASL_PLAINTEXT
+</span></span><span class=line><span class=cl>sasl.mechanism.inter.broker.protocol=SCRAM-SHA-256
+</span></span><span class=line><span class=cl>sasl.enabled.mechanisms=SCRAM-SHA-256
+</span></span><span class=line><span class=cl>super.users=User:admin
+</span></span></code></pre></td></tr></table></div></div><h3 id=添加sasl配置文件>添加SASL配置文件</h3><p>在配置目录下创建一个 kafka_server_jaas.conf 文件<br>** vim kafka_server_jaas.conf: **</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>KafkaServer {
+</span></span><span class=line><span class=cl>  org.apache.kafka.common.security.scram.ScramLoginModule required
+</span></span><span class=line><span class=cl>  username=&#34;admin&#34;
+</span></span><span class=line><span class=cl>  password=&#34;admin&#34;
+</span></span><span class=line><span class=cl>  user_admin=&#34;admin&#34;
+</span></span><span class=line><span class=cl>  user_producer=&#34;pwd1&#34;
+</span></span><span class=line><span class=cl>  user_consumer=&#34;pwd2&#34;;
+</span></span><span class=line><span class=cl>};
+</span></span></code></pre></td></tr></table></div></div><p>基本语法注意事项：
+第一行：固定名称指定 KafkaServer 端的配置。
+第二行：安全认证类名为 ScramLoginModule，与 Kafka 属性文件中的协议类型一致。
+第三、四行：服务端使用的帐号和密码。
+第五行，超管帐号的密码。
+后面都是预设普通帐号认证信息，语法为 user_真正的用户名=&lsquo;&lsquo;密码"
+最后一行用户名密码定义后，必须以分号 ; 结尾。</p><h3 id=24-修改启动脚本>2.4 修改启动脚本</h3><p>vim bin/kafka-server-start.sh ，找到 <strong>export KAFKA_HEAP_OPTS</strong> , 添加jvm 文件：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-gdscript3 data-lang=gdscript3><span class=line><span class=cl><span class=k>export</span> <span class=n>KAFKA_HEAP_OPTS</span><span class=o>=</span><span class=s2>&#34;-Xmx6G -Xms6G -Djava.security.auth.login.config=/approot/kafka/config/kafka_server_jaas.conf&#34;</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=25-启动kafka服务>2.5 启动kafka服务</h3><p>向 Zookeeper 注册 kafka_server_jaas.conf 文件中定义的各个用户的密码</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>bin/kafka-configs.sh --zookeeper localhost:2181 --alter --add-config <span class=s1>&#39;SCRAM-SHA-256=[password=admin]&#39;</span> --entity-type users --entity-name admin
+</span></span></code></pre></td></tr></table></div></div><p>这一步必须配置，否则启动 Kafka 的时候会报错：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>/approot/kafka/bin/kafka-server-start.sh -daemon /approot/kafka/config/server.properties 
+</span></span></code></pre></td></tr></table></div></div><h2 id=kafka客户端配置登录认证>kafka客户端配置登录认证</h2><h3 id=创建客户端认证配置文件>创建客户端认证配置文件</h3><p>在配置目录下创建一个 producer.conf 文件：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>security.protocol=SASL_PLAINTEXT
+</span></span><span class=line><span class=cl>sasl.mechanism=SCRAM-SHA-256
+</span></span><span class=line><span class=cl>sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username=&#34;producer&#34; password=&#34;pwd1&#34;;
+</span></span></code></pre></td></tr></table></div></div><p>测试命令</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>bin/kafka-console-producer.sh --broker-list localhost:9092 --topic <span class=nb>test</span>  --producer.config /approot/kafka/config/producer.conf
+</span></span></code></pre></td></tr></table></div></div><p>在配置目录下创建一个 consumer.conf 文件：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>security.protocol<span class=o>=</span>SASL_PLAINTEXT
+</span></span><span class=line><span class=cl>sasl.mechanism<span class=o>=</span>SCRAM-SHA-256
+</span></span><span class=line><span class=cl>sasl.jaas.config<span class=o>=</span>org.apache.kafka.common.security.scram.ScramLoginModule required <span class=nv>username</span><span class=o>=</span><span class=s2>&#34;consumer&#34;</span> <span class=nv>password</span><span class=o>=</span><span class=s2>&#34;pwd2&#34;</span><span class=p>;</span>
+</span></span></code></pre></td></tr></table></div></div></section><footer class=article-footer><section class=article-tags><a href=/tags/kafka/>kafka</a></section><section class=article-copyright><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><path d="M14.5 9a3.5 4 0 100 6"/></svg><span>Licensed under CC BY-NC-SA 4.0</span></section></footer><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/katex.min.css integrity="sha256-J+iAE0sgH8QSz9hpcDxXIftnj65JEZgNhGcgReTTK9s=" crossorigin=anonymous><script src=https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/katex.min.js integrity="sha256-InsNdER1b2xUewP+pKCUJpkhiqwHgqiPXDlIk7GzBu4=" crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/contrib/auto-render.min.js integrity="sha256-y39Mpg7V3D4lhBX4x6O0bUqTV4pSrfgwEfGKfxkOdgI=" crossorigin=anonymous defer></script><script>window.addEventListener("DOMContentLoaded",()=>{renderMathInElement(document.querySelector(`.article-content`),{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1},{left:"\\(",right:"\\)",display:!1},{left:"\\[",right:"\\]",display:!0}]})})</script></article><footer class=site-footer><section class=copyright>&copy;
+2023 importzhh的小破站</section><section class=powerby>Built with <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a><br>主题 <b><a href=https://github.com/CaiJimmy/hugo-theme-stack target=_blank rel=noopener data-version=3.16.0>Stack</a></b> 由 <a href=https://jimmycai.com target=_blank rel=noopener>Jimmy</a> 设计</section></footer><div class=pswp tabindex=-1 role=dialog aria-hidden=true><div class=pswp__bg></div><div class=pswp__scroll-wrap><div class=pswp__container><div class=pswp__item></div><div class=pswp__item></div><div class=pswp__item></div></div><div class="pswp__ui pswp__ui--hidden"><div class=pswp__top-bar><div class=pswp__counter></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<button class="pswp__button pswp__button--share" title=Share></button>
+<button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button><div class=pswp__preloader><div class=pswp__preloader__icn><div class=pswp__preloader__cut><div class=pswp__preloader__donut></div></div></div></div></div><div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"><div class=pswp__share-tooltip></div></div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)"></button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class=pswp__caption><div class=pswp__caption__center></div></div></div></div></div><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo=" crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU=" crossorigin=anonymous defer></script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css crossorigin=anonymous><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css crossorigin=anonymous></main></div><script src=https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z+KMkF24hUW8WePSA9HM=" crossorigin=anonymous></script><script type=text/javascript src=/ts/main.js defer></script>
+<script>(function(){const e=document.createElement("link");e.href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap",e.type="text/css",e.rel="stylesheet",document.head.appendChild(e)})()</script></body></html>

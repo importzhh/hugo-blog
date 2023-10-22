@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Github on importzhh的小破站</title><link>https://blog.importzhh.me/tags/github/</link><description>Recent content in Github on importzhh的小破站</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Fri, 14 Jul 2023 01:09:09 +0800</lastBuildDate><atom:link href="https://blog.importzhh.me/tags/github/index.xml" rel="self" type="application/rss+xml"/><item><title>github基本操作</title><link>https://blog.importzhh.me/p/github%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/</link><pubDate>Fri, 14 Jul 2023 01:09:09 +0800</pubDate><guid>https://blog.importzhh.me/p/github%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/</guid><description>&lt;h2 id="分支保护">分支保护&lt;/h2>
+&lt;p>GitHub 的分支保护选项允许存储库所有者对规定的分支设置一些特定的访问和修改规则，以增加代码健壮性和项目管理的效率。&lt;/p>
+&lt;p>照你描述的需求，你可以本地创建新的开发分支，完成开发后推送到 GitHub。然后你可以发起一个 pull request，请求合并你的开发分支到主分支。开发团队其他成员（或你自己）可以审查这个 pull request，在确认没有问题后将其合并到主分支。&lt;/p>
+&lt;p>以下是对分支保护选项的设置建议:&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;strong>Protect matching branches&lt;/strong>: 开启。你可能想要保护你的主分支，防止直接推送代码。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Require a pull request before merging&lt;/strong>: 开启。此设置强制你必须通过 pull request 才能将更改合并到受保护的分支。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Require approvals&lt;/strong>: 根据你的团队规模和审查需求来决定。如果你希望有人审核代码，那就开启这个选项。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Dismiss stale pull request approvals when new commits are pushed&lt;/strong>: 开启。这确保每次新提交都得到审查。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Require review from Code Owners&lt;/strong>: 可以按需开启。如果你的团队有指定代码所有者，那么他们的审查就变得非常重要。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Require approval of the most recent reviewable push&lt;/strong>: 可以按需开启。这确保最新的提交已被审查。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Require status checks to pass before merging&lt;/strong>: 如果你有 CI/CD 流程，那么你应该开启。这确保所有测试都通过后才能合并。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Require branches to be up to date before merging&lt;/strong>: 应开启，以确保在合并之前所有的代码都是最新的。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Require conversation resolution before merging&lt;/strong>: 可以按需开启。这确保所有的代码讨论都已经解决。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Require signed commits&lt;/strong>: 可以按需开启。如果你需要确保提交的代码来源的身份验证和完整性，可以开启这个选项。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Require linear history&lt;/strong>: 可以按需开启。如果你希望保持你的提交历史直线型，可以选择此项。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Require deployments to succeed before merging&lt;/strong>: 如果你的项目有自动部署流程，那你可以开启这个选项。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Lock branch&lt;/strong>: 除非你有特别的需求，否则一般不需要开启。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Do not allow bypassing the above settings&lt;/strong>: 为确保所有设置都被执行，开启该选项。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Allow force pushes/Allow deletions&lt;/strong>: 这两个选项的开启取决于你是否希望允许有权限访问的用户执行强制推送和删除分支。这些操作会改变历史记录，一般较少使用，如非必要，可以不选择开启。&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;p>值得注意的是，由于分支保护规则可能会阻止某些类型的拉取请求，所以对于希望构建和测试拉取请求的人来说，这可能会造成问题。你可以设置允许特定的人或团队推送到受保护的分支，或者允许那些提出拉取请求的人合并他们的改动。&lt;/p>
+&lt;h2 id="配置多个账户">配置多个账户&lt;/h2>
+&lt;p>要在同一台机器上配置多个 GitHub 账户，你需要为每个账户创建一个新的 SSH 密钥，并在 &lt;code>~/.ssh/config&lt;/code> 文件中为每个密钥创建一个新的 SSH 别名。以下是详细步骤：&lt;/p>
+&lt;ol>
+&lt;li>
+&lt;p>&lt;strong>生成新的 SSH 密钥&lt;/strong>：对于每个 GitHub 账户，你需要创建一个新的 SSH 密钥。你可以使用 &lt;code>ssh-keygen&lt;/code> 命令来生成密钥：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">ssh-keygen -t ed25519 -C &lt;span class="s2">&amp;#34;your-email@example.com&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>当提示你输入文件以保存密钥时，输入一个新的文件名，例如 &lt;code>~/.ssh/id_ed25519_github_username&lt;/code>。这将在 &lt;code>~/.ssh&lt;/code> 目录下创建两个文件，一个是私钥（&lt;code>id_ed25519_github_username&lt;/code>），另一个是公钥（&lt;code>id_ed25519_github_username.pub&lt;/code>）。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>将新的公钥添加到 GitHub 账户&lt;/strong>：登录到你的 GitHub 账户，然后打开 &amp;ldquo;Settings&amp;rdquo; -&amp;gt; &amp;ldquo;SSH and GPG keys&amp;rdquo; -&amp;gt; &amp;ldquo;New SSH key&amp;rdquo;。然后，打开你刚刚创建的公钥文件，将内容复制粘贴到 &amp;ldquo;Key&amp;rdquo; 字段，给密钥起个名字，点击 &amp;ldquo;Add SSH key&amp;rdquo;。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>在 &lt;code>~/.ssh/config&lt;/code> 文件中创建新的 SSH 别名&lt;/strong>：在 &lt;code>~/.ssh/config&lt;/code> 文件中（如果文件不存在，你需要创建一个），为每个 SSH 密钥创建一个新的 Host。你需要为每个 Host 指定 HostName（总是 &lt;code>github.com&lt;/code>），User（总是 &lt;code>git&lt;/code>），以及你的私钥文件的位置。例如：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># Account 1&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Host github.com-username1
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> HostName github.com
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> User git
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> IdentityFile ~/.ssh/id_ed25519_github_username1
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># Account 2&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Host github.com-username2
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> HostName github.com
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> User git
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> IdentityFile ~/.ssh/id_ed25519_github_username2
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>在 Git 仓库中切换账户&lt;/strong>：在你的 Git 仓库中，你可以通过更改仓库的 remote URL 来切换账户。例如，如果你想要将仓库的 owner 切换为 &lt;code>username2&lt;/code>，你可以这样做：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">git remote set-url origin git@github.com-username2:username2/repo.git
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;/li>
+&lt;/ol>
+&lt;p>这样，当你 push 到 &lt;code>origin&lt;/code> 时，Git 会使用 &lt;code>github.com-username2&lt;/code> 的 SSH 密钥，这个密钥是与你的 &lt;code>username2&lt;/code> GitHub 账户关联的。&lt;/p>
+&lt;p>请注意，这种方法只能用于切换整个仓库的 owner，而不能在单个 commit 中切换账户。如果你需要在不同的 commits 中使用不同的账户，你可能需要考虑在每次 commit 之前更改你的 Git 配置（使用 &lt;code>git config user.name&lt;/code> 和 &lt;code>git config user.email&lt;/code>），或者使用不同的工作目录或 Git 工作树。&lt;/p>
+&lt;h2 id="github-pages">github pages&lt;/h2>
+&lt;ul>
+&lt;li>&lt;strong>原文链接：&lt;/strong> &lt;a class="link" href="https://siriusq.top/github-pages-%E5%90%AF%E7%94%A8-cloudflare-%E5%8A%A0%E9%80%9F%E5%8F%8A-https.html" title="GitHub Pages 启用 Cloudflare 加速及 HTTPS"
+target="_blank" rel="noopener"
+>https://siriusq.top/github-pages-启用-cloudflare-加速及-https.html&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;ol>
+&lt;li>
+&lt;p>登录 &lt;a class="link" href="https://dash.cloudflare.com/" target="_blank" rel="noopener"
+>Cloudflare&lt;/a>， 然后点击顶栏的&lt;code>Add site&lt;/code>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>输入自己的域名，然后点击&lt;code>Add site&lt;/code>按钮，我这胡乱加了一个没人用的做示范&lt;/p>
+&lt;p>&lt;img src="https://blog.importzhh.me/p/github%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/1.png"
+width="2560"
+height="459"
+srcset="https://blog.importzhh.me/p/github%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/1_hudf3faeab2842639437f3c3869a89beb8_62254_480x0_resize_box_3.png 480w, https://blog.importzhh.me/p/github%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/1_hudf3faeab2842639437f3c3869a89beb8_62254_1024x0_resize_box_3.png 1024w"
+loading="lazy"
+alt="1.png"
+class="gallery-image"
+data-flex-grow="557"
+data-flex-basis="1338px"
+>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>选择方案，一般选&lt;code>Free&lt;/code>就够用了
+&lt;img src="https://blog.importzhh.me/p/github%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/2.png"
+width="2560"
+height="1194"
+srcset="https://blog.importzhh.me/p/github%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/2_hu6f60af20436d3ca7b14153c1ba8dff91_161813_480x0_resize_box_3.png 480w, https://blog.importzhh.me/p/github%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/2_hu6f60af20436d3ca7b14153c1ba8dff91_161813_1024x0_resize_box_3.png 1024w"
+loading="lazy"
+alt="2.png"
+class="gallery-image"
+data-flex-grow="214"
+data-flex-basis="514px"
+>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>然后Cloudflare会自动获取域名的DNS记录，这里跳过，拉到页面最底部，点击&lt;code>Continue&lt;/code>按钮，待会回来再配置
+&lt;img src="https://blog.importzhh.me/p/github%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/3.png"
+width="2560"
+height="1324"
+srcset="https://blog.importzhh.me/p/github%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/3_hu33da73acdc644bca7c72816a6e127477_172377_480x0_resize_box_3.png 480w, https://blog.importzhh.me/p/github%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/3_hu33da73acdc644bca7c72816a6e127477_172377_1024x0_resize_box_3.png 1024w"
+loading="lazy"
+alt="3.png"
+class="gallery-image"
+data-flex-grow="193"
+data-flex-basis="464px"
+>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>复制Cloudflare给出的域名服务器，回到域名注册商那里替换掉原有的
+&lt;img src="https://blog.importzhh.me/p/github%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/4.png"
+width="2560"
+height="1351"
+srcset="https://blog.importzhh.me/p/github%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/4_hufeeb43ec8d6bb59ea0612b047abd7a25_151205_480x0_resize_box_3.png 480w, https://blog.importzhh.me/p/github%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/4_hufeeb43ec8d6bb59ea0612b047abd7a25_151205_1024x0_resize_box_3.png 1024w"
+loading="lazy"
+alt="4.png"
+class="gallery-image"
+data-flex-grow="189"
+data-flex-basis="454px"
+>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>回到Cloudflare，点击&lt;code>Done, check nameservers&lt;/code>
+&lt;img src="https://blog.importzhh.me/p/github%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/5.png"
+width="1238"
+height="642"
+srcset="https://blog.importzhh.me/p/github%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/5_hub593264341200030e4c9b0b352bbfb0f_116345_480x0_resize_box_3.png 480w, https://blog.importzhh.me/p/github%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/5_hub593264341200030e4c9b0b352bbfb0f_116345_1024x0_resize_box_3.png 1024w"
+loading="lazy"
+alt="5.png"
+class="gallery-image"
+data-flex-grow="192"
+data-flex-basis="462px"
+>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>然后慢慢等待生效，生效后会有邮件提醒，等待生效的时候可以先设置&lt;code>SSL/TLS&lt;/code>&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;ul>
+&lt;li>
+&lt;ol>
+&lt;li>在Overview里，将Encryption Mode先设置为&lt;code>Full&lt;/code>
+&lt;img src="https://blog.importzhh.me/p/github%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/6.png"
+width="2101"
+height="783"
+srcset="https://blog.importzhh.me/p/github%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/6_hu9184218396f3da35bd983ccbc4d461e4_91444_480x0_resize_box_3.png 480w, https://blog.importzhh.me/p/github%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/6_hu9184218396f3da35bd983ccbc4d461e4_91444_1024x0_resize_box_3.png 1024w"
+loading="lazy"
+alt="6.png"
+class="gallery-image"
+data-flex-grow="268"
+data-flex-basis="643px"
+>&lt;/li>
+&lt;/ol>
+&lt;/li>
+&lt;li>
+&lt;ol start="2">
+&lt;li>然后到Edge Certificates中，开启&lt;code>Always Use HTTPS&lt;/code>、&lt;code>Opportunistic Encryption&lt;/code>等
+&lt;img src="https://blog.importzhh.me/p/github%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/7.png"
+width="2118"
+height="1351"
+srcset="https://blog.importzhh.me/p/github%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/7_hu008b1a96b27bd14255d13b24f11ffa1d_124227_480x0_resize_box_3.png 480w, https://blog.importzhh.me/p/github%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/7_hu008b1a96b27bd14255d13b24f11ffa1d_124227_1024x0_resize_box_3.png 1024w"
+loading="lazy"
+alt="7.png"
+class="gallery-image"
+data-flex-grow="156"
+data-flex-basis="376px"
+>&lt;/li>
+&lt;/ol>
+&lt;/li>
+&lt;li>
+&lt;ol start="3">
+&lt;li>到Origin Server中，开启&lt;code>Authenticated Origin Pulls&lt;/code>
+&lt;img src="https://blog.importzhh.me/p/github%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/8.png"
+width="2093"
+height="948"
+srcset="https://blog.importzhh.me/p/github%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/8_hu3ec2f7c80338698ed26308dca738c81d_84720_480x0_resize_box_3.png 480w, https://blog.importzhh.me/p/github%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/8_hu3ec2f7c80338698ed26308dca738c81d_84720_1024x0_resize_box_3.png 1024w"
+loading="lazy"
+alt="8.png"
+class="gallery-image"
+data-flex-grow="220"
+data-flex-basis="529px"
+>&lt;/li>
+&lt;/ol>
+&lt;/li>
+&lt;/ul>
+&lt;ol start="8">
+&lt;li>生效后到&lt;code>DNS&lt;/code>设置里添加四条A记录与一条CNAME记录&lt;/li>
+&lt;/ol>
+&lt;ul>
+&lt;li>
+&lt;ol>
+&lt;li>CNAME记录的NAME设置为&lt;code>www&lt;/code>，Content设置为GitHub Pages默认的域名，&lt;code>用户名.github.io&lt;/code>那个&lt;/li>
+&lt;/ol>
+&lt;/li>
+&lt;li>
+&lt;ol start="2">
+&lt;li>A记录的Name都使用&lt;code>@&lt;/code>或者自己的域名，Content依次设置为&lt;/li>
+&lt;/ol>
+&lt;/li>
+&lt;/ul>
+&lt;ol start="9">
+&lt;li>确认一下各个记录的Proxy status都是&lt;code>Proxied&lt;/code>状态，即橙色的云朵
+&lt;img src="https://blog.importzhh.me/p/github%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/9.png"
+width="1361"
+height="778"
+srcset="https://blog.importzhh.me/p/github%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/9_hua0a59a4696d5ee04830110f9569bfcfd_71868_480x0_resize_box_3.png 480w, https://blog.importzhh.me/p/github%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/9_hua0a59a4696d5ee04830110f9569bfcfd_71868_1024x0_resize_box_3.png 1024w"
+loading="lazy"
+alt="9.png"
+class="gallery-image"
+data-flex-grow="174"
+data-flex-basis="419px"
+>&lt;/li>
+&lt;/ol>
+&lt;h3 id="github-pages-配置">GitHub Pages 配置&lt;/h3>
+&lt;ol>
+&lt;li>打开自己的网站的仓库设置&lt;code>Settings&lt;/code>-&lt;code>Pages&lt;/code>&lt;/li>
+&lt;li>在&lt;code>Custom domain&lt;/code>中填入自己的域名，点击Save后会自动生成一个CNAME文件&lt;/li>
+&lt;/ol>
+&lt;h2 id="开启encryption-full-strict模式">开启Encryption Full (strict)模式&lt;/h2>
+&lt;p>这里没有测试成功
+Full (strict)模式与Full模式的区别在于，Full (strict)模式使用的是由可信 CA 或 Cloudflare Origin CA 签名的有效证书并对每个请求验证证书，而非Full模式使用的无需验证的自签名证书。GitHub Pages可以通过开启&lt;code>Enforce HTTPS&lt;/code>来获取免费的可信证书，满足开启Full (strict)模式的条件。下面就是我今天新发现的问题，我的Pages设置中不能开启&lt;code>Enforce HTTPS&lt;/code>，勾选框一直是灰色的，折腾半天发现是Cloudflare的代理状态的造成的，解决方案如下&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;ol>
+&lt;li>在Cloudflare的DNS设置中把Proxy status全部设置为&lt;code>DNS Only&lt;/code>状态，即灰色的云朵&lt;/li>
+&lt;/ol>
+&lt;/li>
+&lt;li>
+&lt;ol start="2">
+&lt;li>回到Pages设置，刷新一下就可以勾选&lt;code>Enforce HTTPS&lt;/code>了&lt;/li>
+&lt;/ol>
+&lt;/li>
+&lt;li>
+&lt;ol start="3">
+&lt;li>GitHub会自动申请SSL证书，有了这个证书才能够在Cloudflare开启Full (strict)模式&lt;/li>
+&lt;/ol>
+&lt;/li>
+&lt;li>
+&lt;ol start="4">
+&lt;li>等待Pages的HTTPS生效后，回到Cloudflare，把刚才修改的Proxy status全部恢复为&lt;code>Proxied&lt;/code>状态，即橙色的云朵&lt;/li>
+&lt;/ol>
+&lt;/li>
+&lt;li>
+&lt;ol start="5">
+&lt;li>到&lt;code>SSL/TLS&lt;/code>设置中，将Encryption Mode设置为&lt;code>Full (strict)&lt;/code>&lt;/li>
+&lt;/ol>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="dns记录类型科普">DNS记录类型科普&lt;/h2>
+&lt;p>部分内容引用自 &lt;a class="link" href="https://zh.m.wikipedia.org/zh-hans/DNS%E8%AE%B0%E5%BD%95%E7%B1%BB%E5%9E%8B%E5%88%97%E8%A1%A8" target="_blank" rel="noopener"
+>维基百科&lt;/a>&lt;/p>
+&lt;h3 id="a记录">A记录&lt;/h3>
+&lt;p>A记录(Address record)是用来指定主机名（或域名）对应的IP地址记录。用户可以将该域名下的网站服务器指向到自己的网页服务器(web server)上。同时也可以设置域名的子域名。它会传回一个32位元的IPv4地址。&lt;/p>
+&lt;h3 id="aaaa记录">AAAA记录&lt;/h3>
+&lt;p>AAAA记录(AAAA record)是用来将域名解析到IPv6地址的DNS记录。用户可以将一个域名解析到IPv6地址上，也可以将子域名解析到IPv6地址上。它会传回一个128位元的IPv6地址。&lt;/p>
+&lt;h3 id="cname记录">CNAME记录&lt;/h3>
+&lt;p>CNAME记录(Canonical Name Record)，用于将一个域名（同名）映射到另一个域名（真实名称），域名解析服务器遇到CNAME记录会以映射到的目标重新开始查询。CNAME 记录可用于 CDN 加速，通过 CDN 加速别名解析网站域名。&lt;/p>
+&lt;h3 id="ns记录">NS记录&lt;/h3>
+&lt;p>NS(Name Server)记录是域名服务器记录，用来指定该域名由哪个DNS服务器来进行解析。如果需要把子域名交给其他DNS服务商解析，就需要添加NS记录。&lt;/p>
+&lt;h3 id="mx记录">MX记录&lt;/h3>
+&lt;p>MX(mail exchanger)记录用于指定负责处理发往收件人域名的邮件服务器。&lt;/p>
+&lt;h3 id="txt记录">TXT记录&lt;/h3>
+&lt;p>TXT记录一般指为某个主机名或域名设置的说明。&lt;/p>
+&lt;h3 id="ttl">TTL&lt;/h3>
+&lt;p>TTL(Time To Live)表示解析记录在DNS服务器中的缓存时间，长度为秒。当本地DNS服务器收到某一域名的解析请求时，需要向该域名指定的权威DNS服务器发送解析请求获取解析记录。获得的解析记录会在本地DNS服务器中保存一段时间。在这段时间内，如果本地DNS服务器再次收到该域名的解析请求，将不再向权威DNS服务器发送解析请求，而是直接返回保存在本地DNS服务器中的解析记录。&lt;/p>
+&lt;h2 id="对比原来博文差距还是很大-有待进一步美化">对比原来博文差距还是很大 有待进一步美化&lt;/h2>
+&lt;p>没有自定义颜色 自定义背景
+每一项分割线 字体都有待优化&lt;/p></description></item></channel></rss>

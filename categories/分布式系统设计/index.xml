@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>分布式系统设计 on importzhh的小破站</title><link>https://blog.importzhh.me/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/</link><description>Recent content in 分布式系统设计 on importzhh的小破站</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sun, 15 Oct 2023 12:44:47 +0800</lastBuildDate><atom:link href="https://blog.importzhh.me/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/index.xml" rel="self" type="application/rss+xml"/><item><title>I: DDIA阅读笔记1</title><link>https://blog.importzhh.me/p/i-ddia%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B01/</link><pubDate>Sun, 15 Oct 2023 12:44:47 +0800</pubDate><guid>https://blog.importzhh.me/p/i-ddia%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B01/</guid><description>&lt;h2 id="为什么推荐这本书">为什么推荐这本书&lt;/h2>
+&lt;p>&lt;strong>《数据密集型应用系统设计》&lt;/strong>，英文名称是 &lt;strong>《Designing Data-Intensive Application》&lt;/strong> ，也被简称为 &lt;strong>DDIA&lt;/strong>。&lt;/p>
+&lt;p>&lt;img src="https://blog.importzhh.me/p/i-ddia%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B01/iShot_2023-10-22_16.29.44.png"
+width="1462"
+height="648"
+srcset="https://blog.importzhh.me/p/i-ddia%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B01/iShot_2023-10-22_16.29.44_huc9ad09657234cf4b7c5e329ab05f2d24_252116_480x0_resize_box_3.png 480w, https://blog.importzhh.me/p/i-ddia%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B01/iShot_2023-10-22_16.29.44_huc9ad09657234cf4b7c5e329ab05f2d24_252116_1024x0_resize_box_3.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="225"
+data-flex-basis="541px"
+>&lt;/p>
+&lt;h3 id="面试八股文">面试八股文&lt;/h3>
+&lt;h4 id="分布式系统有什么特点">分布式系统有什么特点&lt;/h4>
+&lt;p>分布式系统的设计目标是，最大化整体资源利用率的同时，处理局部错误、保持对外可用性。
+在构建分布式系统时，在逻辑上要注意以下这些方面：&lt;/p>
+&lt;ul>
+&lt;li>可扩展性：可扩展性是对分布式系统最本质的要求，即系统设计允许我们只通过增加机器来应对不断增长的外部需求。&lt;/li>
+&lt;li>容错性\可用性：这是可扩展性所带来的一个副作用，即在系统规模不断变大之后，单个机器故障便会成为常态。系统需要自动处理这些故障，对外保持可用性。&lt;/li>
+&lt;li>并发性：由于没有全局时钟进行协调，分散的机器天然处在“平行宇宙”中。系统需要引导这些并发变为协作，以拆解并执行集群任务。&lt;/li>
+&lt;li>异构性（对内）：系统需要处理进群内部不同硬件、不同操作系统、不同中间件的差异性，并且能够容纳新的异构组件加入系统。&lt;/li>
+&lt;li>透明性（对外）：对外屏蔽系统复杂性，提供逻辑上的单一性。&lt;/li>
+&lt;/ul>
+&lt;h4 id="有几种类型">有几种类型&lt;/h4>
+&lt;p>在组织分布式系统时，在物理上可以有以下几种类型：&lt;/p>
+&lt;ul>
+&lt;li>主从架构（master-workers）：有一个负责指挥的机器，其他机器负责干活，如 Hadoop。好处是设计和实现相对容易，坏处是单点瓶颈和故障。&lt;/li>
+&lt;li>点对点架构（peer-to-peer）：所有机器逻辑等价。如亚马逊 Dynamo，好处是没有单点故障，坏处是机器协调不好做、一致性也不好保证。不过，如果系统是无状态的，则这种架构很合适。&lt;/li>
+&lt;li>多层架构（multi-tier）：这是一种复合架构，实际中也最常用，比如今年来常说存储计算分离。每一层可以根据不同特点（IO 密集型、计算密集型）进行设计，甚至可以复用现有组件（云原生）。&lt;/li>
+&lt;/ul>
+&lt;h4 id="有哪些优劣">有哪些优劣&lt;/h4>
+&lt;p>分布式系统是由于单机能力不匹配数据尺度的一种无奈之举。因此，在做系统设计时，优先考虑单机系统。毕竟，分布式系统的复杂度是指数上升的。&lt;/p>
+&lt;p>&lt;code>优点&lt;/code>
+高可用、高吞吐、高可扩展性
+高可用、容错：一部分机器坏掉，仍可以正常对外提供服务。
+无限扩展：只要设计的好，可以通过线性的增加机器资源来应对不断增长的需求。
+低延迟：多地部署，将用户请求按地理路由到最近机房处理。&lt;/p>
+&lt;p>&lt;code>缺点&lt;/code>
+最大的问题是复杂性。&lt;/p>
+&lt;ul>
+&lt;li>数据的一致性。考虑到大量的机器故障：宕机、重启、关机，数据可能丢失、陈旧、出错，如何让系统容纳这些问题，对外保证数据的正确性，需要相当复杂的设计。&lt;/li>
+&lt;li>网络和通信故障。网络的不可靠，消息可能丢失、早到、迟到、Hang 住，这给机器间的协调带来了极大的复杂度。像 TCP 等网络基础协议，能解决部分问题，但更多的需要系统层面自己处理。更不用说，开放式网络上可能存在的消息伪造。&lt;/li>
+&lt;li>管理复杂度。机器数量到达一定数量级时，如何对他们进行有效监控、收集日志、负载均衡，都是很大挑战。&lt;/li>
+&lt;li>延迟。网络通信延迟要比机器内通信高出几个数量级，而组件越多、网络跳数越多，延迟便会更高，这些最终都会作用于系统对外服务质量上。&lt;/li>
+&lt;/ul>
+&lt;h3 id="这本书能够起到什么帮助">这本书能够起到什么帮助&lt;/h3>
+&lt;p>作为一个分布式系统初学者，面对网上未加归类、浩如烟海的学习资料，很容易两眼抓瞎。
+这本书能够帮助你对数据库和分布式系统相关的论文有一定了解, 帮助你在脑海中构建一套数据系统体系.
+帮助你在数据系统设计的时候,知道你选择的组件有哪些合适的场景,而不至于两眼一抹黑掉到坑里.
+读完此书并不会马上给你带来什么显然易见的收获，也不会直接帮助你写代码。但是，时间久了，这本书带给你的思考的提升，最终会让你收获颇丰。&lt;/p>
+&lt;h2 id="如何阅读一本书">如何阅读一本书&lt;/h2>
+&lt;p>阅读四问:&lt;/p>
+&lt;ol>
+&lt;li>
+&lt;p>整体来说，这本书到底在谈些什么？
+• 书的主题是什么？
+• 这本书在谈论什么东西？&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>作者细部说了什么，怎么说的？
+• 这本书是如何讲述这个主题的？
+• 它的核心章节，或者是观点是什么？&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>这本书说得有道理吗？是全部有道理，还是部分有道理？
+• 这本书讲的有道理吗？
+• 这个章节讲的有道理吗？
+• 他说的理论有对应的开源实现吗？&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>这本书和我有什么关系？
+• 反问自己一句，读完这本书收获了多少？
+• 合上眼，能对着目录讲出这个章节大概内容吗？
+• 能把这本书用自己的话讲给别人听吗？&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;p>什么是「&lt;strong>数据密集型应用系统&lt;/strong>」？&lt;/p>
+&lt;blockquote>
+&lt;p>当数据（数据量、数据复杂度、数据变化速度）是一个应用的主要挑战，那么可以把这个应用称为数据密集型的。与之相对的是计算密集型——处理器速度是主要瓶颈。&lt;/p>
+&lt;/blockquote>
+&lt;p>其实我们平时遇到的大部分系统都是数据密集型的——应用代码访问内存、硬盘、数据库、消息队列中的数据，经过业务逻辑处理，再返回给用户。
+&lt;img src="https://blog.importzhh.me/p/i-ddia%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B01/ch01-fig01.png"
+width="2802"
+height="2214"
+srcset="https://blog.importzhh.me/p/i-ddia%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B01/ch01-fig01_hu209c85f7f2abcb9b1aee2ae4421ad55c_568741_480x0_resize_box_3.png 480w, https://blog.importzhh.me/p/i-ddia%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B01/ch01-fig01_hu209c85f7f2abcb9b1aee2ae4421ad55c_568741_1024x0_resize_box_3.png 1024w"
+loading="lazy"
+alt="ch01-fig01.png"
+class="gallery-image"
+data-flex-grow="126"
+data-flex-basis="303px"
+>&lt;/p>
+&lt;ul>
+&lt;li>很多应用都是在解决不同场景下的数据存储和检索问题——&lt;strong>MySQL，Redis，ElasticSearch，Tidb, HBase，Neo4j，……&lt;/strong>&lt;/li>
+&lt;li>还有很多技术是围绕着数据展开——&lt;strong>kv存储(B+ tree/lsm tree)，编码（JSON, XML, Thrift, ProtoBuffer），行列存储, 文档存储, 对象存储 ……&lt;/strong>&lt;/li>
+&lt;li>当数据在分布式处理时，要考虑——&lt;strong>数据复制，分区，事务……&lt;/strong>&lt;/li>
+&lt;li>大数据场景下，我们会使用——&lt;strong>MapReduce，Spark，Flink 等批处理、流处理框架。&lt;/strong>&lt;/li>
+&lt;/ul>
+&lt;p>这本书既有理论也有实践，基本没有公式，图很多，阅读起来很流畅，比较容易理解。&lt;/p>
+&lt;p>这本书分为了三部分：&lt;/p>
+&lt;ul>
+&lt;li>第一部分：&lt;strong>数据系统的基石&lt;/strong>，包括数据模型与查询语言、存储与检索、数据编码与演化；&lt;/li>
+&lt;li>第二部分：&lt;strong>分布式数据&lt;/strong>，包括复制、分片、事务、一致性与共识；&lt;/li>
+&lt;li>第三部分：&lt;strong>衍生数据&lt;/strong>，包括批处理、流处理、数据系统的未来。
+&lt;img src="https://blog.importzhh.me/p/i-ddia%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B01/iShot_2023-10-22_16.29.45.png"
+width="649"
+height="390"
+srcset="https://blog.importzhh.me/p/i-ddia%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B01/iShot_2023-10-22_16.29.45_hu1b96732b37bb8487366927b1aa3adb33_58973_480x0_resize_box_3.png 480w, https://blog.importzhh.me/p/i-ddia%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B01/iShot_2023-10-22_16.29.45_hu1b96732b37bb8487366927b1aa3adb33_58973_1024x0_resize_box_3.png 1024w"
+loading="lazy"
+alt="iShot_2023-10-22_16.29.45.png"
+class="gallery-image"
+data-flex-grow="166"
+data-flex-basis="399px"
+>&lt;/li>
+&lt;/ul>
+&lt;p>第一，全书分三个部分。分别是单机，多机，衍生。从单机开始聊数据系统，可以摒除分布式庞杂理论的影响，专注在数据系统本身相关理论；
+到第二个部分放开单机限制，着重讲将数据系统扩展到多机所面临的问题和一般解决方案；
+最后一部分笔锋一转，着眼数据处理，以数据系统视角看，无非是一个数据集的变换，也即数据的派生。
+三个部分，层层递进，相互正交。这种行文思路，正是大型工业代码组织思路：将复杂度拆解到几个正交、但又相互连结的模块，
+从而使每个部分都相对内聚而简洁。&lt;/p>
+&lt;p>第二，具体到第一部分，开篇就给了三个总纲式的“心法”：可靠性、可伸缩性、可维护性。
+然后，从上到下，由离用户最近的数据模型（比如关系模型）和查询语言（比如 SQL），
+到稍微底层一点的存储引擎（比如 B+ tree 和 lsm tree）和查询引擎，
+再到最底层的编码（数据结构的降维）和演化，层层下探，零碎知识，至此百川入海，万法归一。&lt;/p>
+&lt;p>第三，具体到每一章，也是节节递进，读起来无比丝滑。比如第三章，在讲存储引擎时，从一个仅由两个 shell 函数组成的“kv 引擎”起，
+到一个简单的日志结构的存储（Bitcask），再到经典的 LSM-Tree。从一个最简单的数据库开始，越讲越深入，把常见数据库的存储与检索方式都讲完了。
+这又是工程中惯用思路：从一个最小可用原型开始，不断增加需求、解决瓶颈，最终得到一个工业可用的存储引擎。&lt;/p>
+&lt;h2 id="阅读建议">阅读建议&lt;/h2>
+&lt;p>这本书比较厚，概念也比较多，而且很少有代码，基本都是在讲逻辑，因此有些「&lt;strong>太干了&lt;/strong>」。
+这本书的内容大而多，每一章都可以成为一本单独的书。如果你时间精力有限，不妨阅读你感兴趣的重点章节。&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>如果你对数据的编码、存储感兴趣，可以阅读第 1~4 章；&lt;/strong>
+&lt;ul>
+&lt;li>&lt;strong>这些是比较基础的内容，阐述了数据库的原理，对工作比较有帮助&lt;/strong>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;strong>如果你对分布式系统感兴趣（如分布式复制、分区、事务等），可以阅读第 5~9 章；&lt;/strong>
+&lt;ul>
+&lt;li>&lt;strong>这部分内容比较偏向于概念和思维，挺抽象的，属于进阶内容，帮助拓展思维（和准备面试）。&lt;/strong>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;strong>如果你对大数据计算（批处理、流处理）感兴趣，可以阅读第 10~12 章。&lt;/strong>
+&lt;ul>
+&lt;li>&lt;strong>这部分内容工程实践比较强，如果你工作中用到了 Spark, Flink 等，可以在这些章节了解它们的原理&lt;/strong>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="阅读资源">阅读资源&lt;/h2>
+&lt;h3 id="推荐系列阅读资源">推荐系列阅读资源：&lt;/h3>
+&lt;ul>
+&lt;li>《数据密集型应用系统设计》开源翻译仓库（9.3K star）：&lt;a class="link" href="https://github.com/Vonng/ddia" target="_blank" rel="noopener"
+>https://github.com/Vonng/ddia&lt;/a>&lt;/li>
+&lt;li>开源版本在线阅读：&lt;a class="link" href="https://vonng.gitbooks.io/ddia-cn/content/" target="_blank" rel="noopener"
+>https://vonng.gitbooks.io/ddia-cn/content/&lt;/a>&lt;/li>
+&lt;li>ddia-references: &lt;a class="link" href="https://github.com/ept/ddia-references" target="_blank" rel="noopener"
+>https://github.com/ept/ddia-references&lt;/a>&lt;/li>
+&lt;li>DDIA 逐章精读: &lt;a class="link" href="https://ddia.qtmuniao.com/#/preface" target="_blank" rel="noopener"
+>https://ddia.qtmuniao.com/#/preface&lt;/a>&lt;/li>
+&lt;li>分布式系统学习资料汇总: &lt;a class="link" href="https://zhuanlan.zhihu.com/p/372646991" target="_blank" rel="noopener"
+>https://zhuanlan.zhihu.com/p/372646991&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;h3 id="ddia-逐章精读">DDIA 逐章精读&lt;/h3>
+&lt;div class="video-wrapper">
+&lt;iframe src="https://player.bilibili.com/player.html?as_wide=1&amp;amp;high_quality=1&amp;amp;page=1&amp;bvid=BV1bY411L7HA"
+scrolling="no"
+frameborder="no"
+framespacing="0"
+allowfullscreen="true"
+>
+&lt;/iframe>
+&lt;/div>
+&lt;h3 id="book-review">Book Review&lt;/h3>
+&lt;p>这里有个很不错的 Book Review，是一个小哥讲了《DDIA》每一章的概述，作者很用心。
+全英文的，在油管可以看到。地址是：
+&lt;a class="link" href="https://www.youtube.com/watch?v=PdtlXdse7pw&amp;amp;list=PL4KdJM8LzAMecwInbBK5GJ3Anz-ts75RQ" target="_blank" rel="noopener"
+>https://www.youtube.com/watch?v=PdtlXdse7pw&amp;amp;list=PL4KdJM8LzAMecwInbBK5GJ3Anz-ts75RQ&lt;/a>&lt;/p>
+&lt;h3 id="mit6824">MIT6.824&lt;/h3>
+&lt;p>看这本书的时候，你可以结合 MIT6.824 分布式系统课程。油管上这门课程的视频版本，在 B 站有这个课程的中文字幕翻译合集地址：
+&lt;div class="video-wrapper">
+&lt;iframe src="https://player.bilibili.com/player.html?as_wide=1&amp;amp;high_quality=1&amp;amp;page=1&amp;bvid=BV1x7411M7Sf"
+scrolling="no"
+frameborder="no"
+framespacing="0"
+allowfullscreen="true"
+>
+&lt;/iframe>
+&lt;/div>
+&lt;/p>
+&lt;p>这门课程的中文文字版，地址：&lt;a class="link" href="https://mit-public-courses-cn-translatio.gitbook.io/mit6-824/" target="_blank" rel="noopener"
+>https://mit-public-courses-cn-translatio.gitbook.io/mit6-824/ &lt;/a>&lt;/p>
+&lt;h3 id="ddia作者martin-kleppmann分布式系统">DDIA作者Martin Kleppmann分布式系统&lt;/h3>
+&lt;div class="video-wrapper">
+&lt;iframe src="https://player.bilibili.com/player.html?as_wide=1&amp;amp;high_quality=1&amp;amp;page=1&amp;bvid=BV17A411W7Cr"
+scrolling="no"
+frameborder="no"
+framespacing="0"
+allowfullscreen="true"
+>
+&lt;/iframe>
+&lt;/div>
+&lt;ul>
+&lt;li>课件pdf：https://www.cl.cam.ac.uk/teaching/2122/ConcDisSys/dist-sys-notes.pdf&lt;/li>
+&lt;li>课程主页：https://www.cl.cam.ac.uk/teaching/2122/ConcDisSys/&lt;/li>
+&lt;li>视频合集：https://www.youtube.com/playlist?list=PLeKd45zvjcDFUEv_ohr_HdUFe97RItdiB&lt;/li>
+&lt;li>作者主页：https://martin.kleppmann.com/&lt;/li>
+&lt;/ul></description></item></channel></rss>

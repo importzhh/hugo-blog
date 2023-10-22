@@ -1,0 +1,233 @@
+<!doctype html><html lang=zh-cn dir=ltr><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="DNS污染 DNS污染的原理是，攻击者在你查找电话号码（即请求DNS解析）的过程中，用假的电话协议（即篡改的IP地址）替换了真正的电话协议。这"><title>一些其他概念不严谨的补充</title><link rel=canonical href=https://blog.importzhh.me/p/%E4%B8%80%E4%BA%9B%E5%85%B6%E4%BB%96%E6%A6%82%E5%BF%B5%E4%B8%8D%E4%B8%A5%E8%B0%A8%E7%9A%84%E8%A1%A5%E5%85%85/><link rel=stylesheet href=/scss/style.min.0d8902b26558cddb5286ea49f2a7aadd5761ed898547e29e5ab572d8c0619ba6.css><meta property="og:title" content="一些其他概念不严谨的补充"><meta property="og:description" content="DNS污染 DNS污染的原理是，攻击者在你查找电话号码（即请求DNS解析）的过程中，用假的电话协议（即篡改的IP地址）替换了真正的电话协议。这"><meta property="og:url" content="https://blog.importzhh.me/p/%E4%B8%80%E4%BA%9B%E5%85%B6%E4%BB%96%E6%A6%82%E5%BF%B5%E4%B8%8D%E4%B8%A5%E8%B0%A8%E7%9A%84%E8%A1%A5%E5%85%85/"><meta property="og:site_name" content="importzhh的小破站"><meta property="og:type" content="article"><meta property="article:section" content="Post"><meta property="article:tag" content="计算机网络微课堂笔记"><meta property="article:published_time" content="2023-07-15T12:44:47+08:00"><meta property="article:modified_time" content="2023-07-15T12:44:47+08:00"><meta name=twitter:title content="一些其他概念不严谨的补充"><meta name=twitter:description content="DNS污染 DNS污染的原理是，攻击者在你查找电话号码（即请求DNS解析）的过程中，用假的电话协议（即篡改的IP地址）替换了真正的电话协议。这"><link rel="shortcut icon" href=/favicon.ico></head><body class=article-page><script>(function(){const e="StackColorScheme";localStorage.getItem(e)||localStorage.setItem(e,"auto")})()</script><script>(function(){const t="StackColorScheme",e=localStorage.getItem(t),n=window.matchMedia("(prefers-color-scheme: dark)").matches===!0;e=="dark"||e==="auto"&&n?document.documentElement.dataset.scheme="dark":document.documentElement.dataset.scheme="light"})()</script><div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky"><button class="hamburger hamburger--spin" type=button id=toggle-menu aria-label=切换菜单>
+<span class=hamburger-box><span class=hamburger-inner></span></span></button><header><figure class=site-avatar><a href=/><img src=/img/avatar_huce6e906a97de2553354850eae15a0392_8624_300x0_resize_box_3.png width=300 height=300 class=site-logo loading=lazy alt=Avatar></a>
+<span class=emoji>🍥</span></figure><div class=site-meta><h1 class=site-name><a href=/>importzhh的小破站</a></h1><h2 class=site-description>实事求是 思危思退思变</h2></div></header><ol class=social-menu><li><a href=https://github.com/importzhh target=_blank title=GitHub rel=me><svg width="800" height="800" viewBox="-1.65 0 259.3 259.3" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid"><g><path fill="#9edcf2" d="M200.9 199.8c0 13.9-32.2 25.1-71.9 25.1-39.7.0-71.9-11.3-71.9-25.1.0-13.9 32.2-25.1 71.9-25.1C168.7 174.7 200.9 185.9 200.9 199.8zm0 0"/><g><defs><path id="SVGID_1_" d="M98.1 244.8c1.6 7.5 5.5 11.9 9.4 14.5h41.1c5-3.4 10.1-9.8 10.1-21.8v-31s.6-7.7 7.7-10.2c0 0 4.1-2.9-.3-4.5.0.0-19.5-1.6-19.5 14.4v23.6s.8 8.7-3.8 12.3v-29.2s.3-9.3 5.1-12.8c0 0 3.2-5.7-3.8-4.2.0.0-13.4 1.9-14 17.6l-.3 30h-3.2l-.3-30c-.6-15.6-14-17.6-14-17.6-7-1.6-3.8 4.2-3.8 4.2 4.8 3.5 5.1 12.8 5.1 12.8v29.5c-4.6-3.3-3.8-12.6-3.8-12.6v-23.6c0-16-19.5-14.4-19.5-14.4-4.5 1.6-.3 4.5-.3 4.5 7 2.6 7.7 10.2 7.7 10.2v21.7L98.1 244.8z"/></defs><clipPath id="SVGID_2_"><use xlink:href="#SVGID_1_" overflow="visible"/></clipPath><path clip-path="url(#SVGID_2_)" fill="#7dbce7" d="M200.9 199.8c0 13.9-32.2 25.1-71.9 25.1-39.7.0-71.9-11.3-71.9-25.1.0-13.9 32.2-25.1 71.9-25.1C168.7 174.7 200.9 185.9 200.9 199.8zm0 0"/></g><path fill="#9edcf2" d="M46.9 125.9l-2.1 7.2s-.5 2.6 1.9 3.1c2.6-.1 2.4-2.5 2.2-3.2L46.9 125.9zm0 0"/><path fill="#010101" d="M255.8 95.6l.2-.9c-21.1-4.2-42.7-4.3-55.8-3.7 2.1-7.7 2.8-16.7 2.8-26.6.0-14.3-5.4-25.7-14-34.3 1.5-4.9 3.5-15.8-2-29.7.0.0-9.8-3.1-32.1 11.8-8.7-2.2-18-3.3-27.3-3.3-10.2.0-20.5 1.3-30.2 3.9C74.4-2.9 64.3.3 64.3.3c-6.6 16.5-2.5 28.8-1.3 31.8-7.8 8.4-12.5 19.1-12.5 32.2.0 9.9 1.1 18.8 3.9 26.5-13.2-.5-34-.3-54.4 3.8l.2.9c20.4-4.1 41.4-4.2 54.5-3.7.6 1.6 1.3 3.2 2 4.7-13 .4-35.1 2.1-56.3 8.1l.3.9c21.4-6 43.7-7.6 56.6-8 7.8 14.4 23 23.8 50.2 26.7-3.9 2.6-7.8 7-9.4 14.5-5.3 2.5-21.9 8.7-31.9-8.5.0.0-5.6-10.2-16.3-11 0 0-10.4-.2-.7 6.5.0.0 6.9 3.3 11.7 15.6.0.0 6.3 21 36.4 14.2V177s-.6 7.7-7.7 10.2c0 0-4.2 2.9.3 4.5.0.0 19.5 1.6 19.5-14.4v-23.6s-.8-9.4 3.8-12.6v38.8s-.3 9.3-5.1 12.8c0 0-3.2 5.7 3.8 4.2.0.0 13.4-1.9 14-17.6l.3-39.3h3.2l.3 39.3c.6 15.6 14 17.6 14 17.6 7 1.6 3.8-4.2 3.8-4.2-4.8-3.5-5.1-12.8-5.1-12.8v-38.5c4.6 3.6 3.8 12.3 3.8 12.3v23.6c0 16 19.5 14.4 19.5 14.4 4.5-1.6.3-4.5.3-4.5-7-2.6-7.7-10.2-7.7-10.2v-31c0-12.1-5.1-18.5-10.1-21.8 29-2.9 42.9-12.2 49.3-26.8 12.7.3 35.6 1.9 57.4 8.1l.3-.9c-21.7-6.1-44.4-7.7-57.3-8.1.6-1.5 1.1-3 1.6-4.6C212.9 91.4 234.6 91.4 255.8 95.6zm0 0"/><path fill="#f5ccb3" d="M174.6 63.7c6.2 5.7 9.9 12.5 9.9 19.8.0 34.4-25.6 35.3-57.2 35.3S70.1 114 70.1 83.5c0-7.3 3.6-14.1 9.8-19.7 10.3-9.4 27.7-4.4 47.4-4.4 19.7.0 37-5.1 47.3 4.3zm0 0"/><path fill="#fff" d="M108.3 85.3c0 9.5-5.3 17.1-11.9 17.1-6.6.0-11.9-7.7-11.9-17.1.0-9.5 5.3-17.1 11.9-17.1C103 68.1 108.3 75.8 108.3 85.3zm0 0"/><path fill="#af5c51" d="M104.5 85.5c0 6.3-3.6 11.4-7.9 11.4-4.4.0-7.9-5.1-7.9-11.4.0-6.3 3.6-11.4 7.9-11.4S104.5 79.2 104.5 85.5zm0 0"/><path fill="#fff" d="M172.2 85.3c0 9.5-5.3 17.1-11.9 17.1s-11.9-7.7-11.9-17.1c0-9.5 5.3-17.1 11.9-17.1C166.8 68.1 172.2 75.8 172.2 85.3zm0 0"/><path fill="#af5c51" d="M168.3 85.5c0 6.3-3.6 11.4-7.9 11.4-4.4.0-7.9-5.1-7.9-11.4.0-6.3 3.6-11.4 7.9-11.4C164.8 74.1 168.3 79.2 168.3 85.5zm0 0"/><path fill="#af5c51" d="M130.5 100.5c0 1.6-1.3 3-3 3-1.6.0-3-1.3-3-3s1.3-3 3-3c1.59999999999999.0 3 1.3 3 3zm0 0"/><path fill="#af5c51" d="M120.6 108c-.2-.5.1-1 .6-1.2s1 .1 1.2.6c.8 2.2 2.8 3.6 5.1 3.6s4.3-1.5 5.1-3.6c.2-.5.7-.8 1.2-.6s.8.7.6 1.2c-1 2.9-3.8 4.9-6.9 4.9C124.4 112.9 121.6 110.9 120.6 108zm0 0"/><path fill="#c4e5d9" d="M54.5 121.6c0 .8-.9 1.4-2.1 1.4-1.1.0-2.1-.6-2.1-1.4.0-.8.9-1.4 2.1-1.4C53.6 120.2 54.5 120.8 54.5 121.6zm0 0"/><path fill="#c4e5d9" d="M60.3 124.8c0 .8-.9 1.4-2.1 1.4-1.1.0-2.1-.6-2.1-1.4.0-.8.9-1.4 2.1-1.4C59.4 123.4 60.3 124 60.3 124.8zm0 0"/><path fill="#c4e5d9" d="M63.8 129c0 .8-.9 1.4-2.1 1.4-1.1.0-2.1-.6-2.1-1.4s.9-1.4 2.1-1.4C62.9 127.5 63.8 128.2 63.8 129zm0 0"/><path fill="#c4e5d9" d="M67 133.8c0 .8-.9 1.4-2.1 1.4-1.1.0-2.1-.6-2.1-1.4s.9-1.4 2.1-1.4C66.1 132.3 67 133 67 133.8zm0 0"/><path fill="#c4e5d9" d="M70.5 138.2c0 .8-.9 1.4-2.1 1.4-1.1.0-2.1-.6-2.1-1.4s.9-1.4 2.1-1.4C69.6 136.8 70.5 137.4 70.5 138.2zm0 0"/><path fill="#c4e5d9" d="M75.3 142.1c0 .8-.9 1.4-2.1 1.4-1.1.0-2.1-.6-2.1-1.4s.9-1.4 2.1-1.4C74.4 140.6 75.3 141.3 75.3 142.1zm0 0"/><path fill="#c4e5d9" d="M82 144.6c0 .8-.9 1.4-2.1 1.4-1.1.0-2.1-.6-2.1-1.4s.9-1.4 2.1-1.4S82 143.8 82 144.6zm0 0"/><path fill="#c4e5d9" d="M88.7 144.6c0 .8-.9 1.4-2.1 1.4-1.1.0-2.1-.6-2.1-1.4s.9-1.4 2.1-1.4S88.7 143.8 88.7 144.6zm0 0"/><path fill="#c4e5d9" d="M95.5 143.5c0 .8-.9 1.4-2.1 1.4-1.1.0-2.1-.6-2.1-1.4s.9-1.4 2.1-1.4C94.5 142.1 95.5 142.7 95.5 143.5zm0 0"/></g></svg></a></li></ol><ol class=menu id=main-menu><li><a href=/><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><polyline points="5 12 3 12 12 3 21 12 19 12"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/><path d="M9 21v-6a2 2 0 012-2h2a2 2 0 012 2v6"/></svg><span>Home</span></a></li><li><a href=/archives/><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><rect x="3" y="4" width="18" height="4" rx="2"/><path d="M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8"/><line x1="10" y1="12" x2="14" y2="12"/></svg><span>Archives</span></a></li><li><a href=/search/><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="10" cy="10" r="7"/><line x1="21" y1="21" x2="15" y2="15"/></svg><span>Search</span></a></li><li><a href=/links/><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M10 14a3.5 3.5.0 005 0l4-4a3.5 3.5.0 00-5-5l-.5.5"/><path d="M14 10a3.5 3.5.0 00-5 0l-4 4a3.5 3.5.0 005 5l.5-.5"/></svg><span>Links</span></a></li><div class=menu-bottom-section><li id=dark-mode-toggle><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="8" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="16" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg><span>暗色模式</span></li></div></ol></aside><aside class="sidebar right-sidebar sticky"><section class="widget archives"><div class=widget-icon><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><line x1="5" y1="9" x2="19" y2="9"/><line x1="5" y1="15" x2="19" y2="15"/><line x1="11" y1="4" x2="7" y2="20"/><line x1="17" y1="4" x2="13" y2="20"/></svg></div><h2 class="widget-title section-title">目录</h2><div class=widget--toc><nav id=TableOfContents><ol><li><a href=#dns污染>DNS污染</a></li><li><a href=#tcp重置攻击>TCP重置攻击</a></li><li><a href=#ss>ss</a></li><li><a href=#中间人攻击>中间人攻击</a></li><li><a href=#ss缺陷>ss缺陷</a></li><li><a href=#https>https</a></li></ol></nav></div></section></aside><main class="main full-width"><article class=main-article><header class=article-header><div class=article-details><header class=article-category><a href=/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/>计算机网络</a></header><div class=article-title-wrapper><h2 class=article-title><a href=/p/%E4%B8%80%E4%BA%9B%E5%85%B6%E4%BB%96%E6%A6%82%E5%BF%B5%E4%B8%8D%E4%B8%A5%E8%B0%A8%E7%9A%84%E8%A1%A5%E5%85%85/>一些其他概念不严谨的补充</a></h2></div><footer class=article-time><div><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M11.795 21H5a2 2 0 01-2-2V7a2 2 0 012-2h12a2 2 0 012 2v4"/><circle cx="18" cy="18" r="4"/><path d="M15 3v4"/><path d="M7 3v4"/><path d="M3 11h16"/><path d="M18 16.496V18l1 1"/></svg><time class=article-time--published>Jul 15, 2023</time></div><div><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg><time class=article-time--reading>阅读时长: 13 分钟</time></div></footer></div></header><section class=article-content><h2 id=dns污染>DNS污染</h2><p>DNS污染的原理是，攻击者在你查找电话号码（即请求DNS解析）的过程中，用假的电话协议（即篡改的IP地址）替换了真正的电话协议。这就导致当你拨打电话（访问网站）时，实际上连接的是一个错误的或恶意的地方。</p><p>以一个具体的例子来说，假设你想要访问一个网站，例如www.baidu.com。在正常情况下，你的计算机会发送一个DNS请求到DNS服务器，以找出这个域名对应的IP地址。然后，你的计算机将用这个IP地址来和网站建立连接。</p><p>但是，在DNS污染攻击中，当你的计算机向DNS服务器发送请求时，攻击者可能会干扰这个请求的响应，使DNS服务器返回一个错误的IP地址（这个地址可能指向一个攻击者控制的，看起来与真正银行网站相似的钓鱼网站）。因此，你的计算机会被引导到错误的网站，而你可能会在不知情的情况下，将你的用户名和密码输入到这个伪造的网站中。</p><p>预防DNS污染的策略主要包括使用DNSSEC（DNS安全扩展）以验证DNS响应的真实性，或使用VPN来创建一个安全的网络连接。</p><h2 id=tcp重置攻击>TCP重置攻击</h2><p>TCP重置攻击（TCP Reset Attack）是一种网络攻击方式，攻击者通过发送伪造的TCP RST（Reset）报文来中断TCP连接。在TCP协议中，RST报文是用来中断一个已经建立的连接的。</p><p>在TCP协议中，每个TCP报文都有一个序列号，这个序列号用于保证数据的有序传输和对失序、丢失数据的重传。在TCP连接中，如果接收到一个RST报文，且这个报文的序列号在当前的有效窗口内，那么TCP连接就会被立即中断。</p><p>TCP重置攻击的原理是，攻击者首先要监听或预测出TCP连接的序列号，然后伪造一个RST报文，把序列号设置在有效窗口内，然后发送给通信的一方或双方。由于接收方收到了序列号有效的RST报文，所以会立即中断连接，导致通信失败。</p><p>举个例子，假设Alice和Bob正在进行TCP连接通信，攻击者Evil想要中断他们的通信。首先，Evil需要知道Alice和Bob通信的TCP序列号，这可能通过嗅探网络流量或者预测序列号获得。然后，Evil伪造一个RST报文，把序列号设置在Alice和Bob通信的有效窗口内，然后发送给Alice或Bob。当Alice或Bob收到这个RST报文，就会认为对方要求中断连接，从而立即中断TCP连接。</p><p><a class=link href=https://zhuanlan.zhihu.com/p/468184471 target=_blank rel=noopener>https://zhuanlan.zhihu.com/p/468184471</a></p><h2 id=ss>ss</h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>假如搭建了一个ss的服务端代理 服务端口8388
+</span></span><span class=line><span class=cl>同时本机运行了一个ss的客户端代理 监听的本地端口1080
+</span></span><span class=line><span class=cl>同时 我们的浏览器设置了一个代理端口 也就是说 我们浏览器的访问请求会先走这个代理的端口
+</span></span><span class=line><span class=cl>就相当于我们在浏览器里面发送一个访问谷歌请求的时候 这个请求就会转交到我们的1080端口
+</span></span><span class=line><span class=cl>客户端拿到这么一个请求 他会对这个请求进行加密 把里面的内容加密
+</span></span><span class=line><span class=cl>加密之后 我们是看不到数据包里面的内容
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>然后他会从这个应用层来到这个传输层
+</span></span><span class=line><span class=cl>传输层会干什么 添加端口对不对
+</span></span><span class=line><span class=cl>那么他会从源端口是监听1080 目标端口就是我们在这个ss客户端里面配置好的那个需要连接的那个服务器 
+</span></span><span class=line><span class=cl>也就是8388 然后构建这么一个数据包 那么这个数据包来到网络层
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>网络层的话是添加ss服务器ip地址 注意 ss服务器ip一般都是国际互联网的ip
+</span></span><span class=line><span class=cl>那么这个数据包就会来到防火墙这边 防火墙拆给你的数据包一看 这个6.6.6.6 没有在我的黑名单里面
+</span></span><span class=line><span class=cl>然后再拆开数据这里一看 由于被加密了
+</span></span><span class=line><span class=cl>所以说他就会放行通过来到这里之后 跳跳跳将会路由到这台服务器
+</span></span><span class=line><span class=cl>这服务器拿到数据后进行解密之后 他就会获得原始的请求
+</span></span><span class=line><span class=cl>也就是说 我们要访问google的这个请求 那么他得到这个请求之后
+</span></span><span class=line><span class=cl>你小子想要访问谷歌对不对 那么我就帮你去访问
+</span></span><span class=line><span class=cl>于是我他代替你去访问谷歌 他会从谷歌这里得到一份响应 首页的数据
+</span></span><span class=line><span class=cl>这是谷歌返回给ss代理的响应
+</span></span><span class=line><span class=cl>收到数据之后 同样的也会对数据进行加密
+</span></span><span class=line><span class=cl>那么加密之后的这个数据会重新构造一个数据包从他的8388端口发往你的1080端口 源地址和目标地址 换一下 他会回应这么一个数据报
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>来到防火墙这一看这个6.6.6.6这个ip地址不在我的黑名单列表 同时这个数据包的内容由于加密了
+</span></span><span class=line><span class=cl>于是乎他就放行通过来到你的电脑同样的一层一层解开
+</span></span><span class=line><span class=cl>最后你的ss客户端得到这么一个数据包 你拿到这个加密的数据包 也可以进行解密 解密之后将会获得
+</span></span><span class=line><span class=cl>首页的内容 你的SS客户端得到这个数据之后 将会
+</span></span><span class=line><span class=cl>把它返回给浏览器 那么浏览器拿到这个数据之后 
+</span></span><span class=line><span class=cl>它就可以愉快的访问内容了
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>但是防火墙除了这种被动的接受这个加密数据之外 他还可以发起主动探测
+</span></span><span class=line><span class=cl>也就是防火墙主动往你这里面发送请求
+</span></span><span class=line><span class=cl>如果说你所用的这个ss协议存在漏洞
+</span></span><span class=line><span class=cl>那么他可以通过一些探测手段来检查你这个服务器是不是运行了ss的服务
+</span></span></code></pre></td></tr></table></div></div><h2 id=中间人攻击>中间人攻击</h2><p>在中间人攻击中，攻击者位于通信的两个端点之间，会将自己伪装成这两个通信端点的另一方，收到一方的信息后，修改信息然后发送给另一方，或者完全控制通信信息。这样，通信两方可能会认为他们正在和预期的通信方进行通信，但实际上所有的信息都被攻击者截取和控制了。</p><p>中间人攻击可以在许多场景中发生，例如公共WiFi网络、电子邮件通信、网络银行等。而防止中间人攻击的主要手段之一就是加密，如使用HTTPS协议进行通信，或者使用VPN等其他加密通道。虽然加密无法阻止中间人拦截通信，但是由于他们无法解密通信内容，因此除非他们能获取到解密的密钥，否则他们无法理解也无法修改通信内容。</p><h2 id=ss缺陷>ss缺陷</h2><p>密码学安全：ss支持各种加密方法，从最初的AES-256-CFB到现在的更为现代的AEAD密码，例如ChaCha20-Poly1305或AES-128-GCM。然而，这依赖于用户选用比较安全的加密算法并使用足够复杂的密码来保证加密的强度。如果用户选择了较弱的加密算法，或者使用了简单的密码，那么他们的通信内容可能被破解。</p><p>时间戳泄漏：ss在OTA（One-Time Authentication）模式中使用时间戳来作为一个部分的key。固不能清楚地泄露通信内容，但可能泄露一些信息，例如通过观察时间戳的变化，攻击者可能能猜测出通信的模式或行为。</p><p>对重放攻击的防护不完全：尽管ss在设计时考虑了防重放攻击，并在后来加入了OTA来进一步加强防护，但有研究指出，在某些特定情况下，ss仍可能受到重放攻击。这需要用户在使用时做好其它安全措施，例如使用最新版本的软件，及时更新和打补丁。</p><p>流量特征识别：虽然ss采用了流加密和混淆技术来尽可能减少流量特征，使得内容被审查的可能性降低，但目前的深度包检查（DPI）技术和机器学习技术在某些场景下仍有可能识别出ss的流量特征。</p><p>流量特征识别（Traffic Pattern Recognition）是网络安全和网络管理领域的一个重要研究课题。在这一领域中，研究者试图通过分析网络流量的各种属性和行为，来识别或预测这些流量的源、目的、协议等信息。这也被广泛应用在流量分类、应用识别、恶意流量检测等多个方面。</p><p>流量特征识别主要关注以下几个方面的信息：</p><ol><li><p>数据包的大小和时间间隔：这可以帮助分析者了解网络连接的一些基本特性，例如其传输速率、周期性行为等。</p></li><li><p>传输层协议和端口：例如TCP、UDP和它们使用的端口号，这些信息可以帮助分析者推测数据流可能的应用类型。</p></li><li><p>数据包头部中的特定字段值：例如TCP的标志位、IP的TTL值、窗口大小等，这些信息可以反映网络连接的状态和行为。</p></li><li><p>链路层和网络层的信息：例如MAC地址、IP地址等，这些信息可以暴露网络连接的实际位置和路由路径。</p></li><li><p>数据流的统计信息：例如数据包的平均大小、方差、峰度、偏度等统计量，这些信息可以帮助分析者理解网络流量的整体特性。</p></li></ol><p>这些信息通常会被收集并处理成特征向量，然后输入到一些机器学习模型（例如SVM、决策树、深度学习等）进行训练和预测。这样可以自动化地识别出各种特定的流量类型或行为模式。</p><ul><li><p>Deep Packet Inspection (DPI) for *** Encrypted Traffic with Deep Learning Models</p></li><li><p>Automated Identification of *** Traffic with machine learning techniques</p></li></ul><h2 id=https>https</h2><p>因为http是明文的数据 所以还是存在被防火墙探测的风险 想要将http流量进行加密的话又需要引入tls 让它成为https流量</p><p>HTTPS使用的是一种叫做“混合加密”系统的方法，它结合了对称加密和非对称加密的优势。具体来说：</p><ol><li><p><strong>非对称加密</strong>: 在握手阶段，服务器会给客户端提供它的公钥，并且可能会请求客户端的公钥。客户端选择一个会话密钥，然后使用服务器的公钥对其进行加密，并发送给服务器。服务器使用它的私钥解密会话密钥。</p><p>这种加密方式主要用于在网络上安全地发送会话密钥，因为只有服务器才能解密通过其公钥加密的密钥。然而，非对称加密在计算上相当昂贵，因此不适合用于所有数据传输。</p></li><li><p><strong>对称加密</strong>: 一旦服务器和客户端都有了会话密钥，他们就可以使用对称加密来加密和解密数据。对称加密要比非对称加密快得多，而且对资源的要求也更低，这使其成为加密大量数据的理想选择。</p></li></ol><p>设想你是一个发信人，你要给朋友（接收人）寄一个需要保密的信件。因此，你在把信寄出去之前，选择把它放在一个有锁的箱子中，然后用一把钥匙把箱子锁起来。这个箱子就相当于HTTPS的加密数据，而那把钥匙就相当于是你的公钥。</p><p>连接请求：你（客户端/浏览器）首先向你的朋友（服务器）发送一个连接请求，就像你告诉朋友你打算寄给他一封信。</p><p>服务器响应与公钥分享：你的朋友（服务器）向你提供了一个公钥，就像他给你一把打开他的箱子的钥匙。</p><p>创建会话密钥：然后，你使用这把钥匙（公钥）来创建一个独特的会话密钥，这相当于你把锁上的箱子放在另一个箱子里，然后使用你自己的锁将其锁起来。然后，你将这个箱子（包含公钥加密后的会话密钥）寄给你的朋友。</p><p>解密会话密钥：你的朋友收到你的信件（加密的箱子），使用他的另一把钥匙（私钥）打开外面的箱子，得到里面的会话密钥。</p><p>数据交换：你和你的朋友都有了相同的会话密钥，你们可以用这个密钥来加密和解密信息。你把你的信（数据）放在箱子里，用这个会话密钥锁起来，然后寄给你的朋友。你的朋友收到后，用同样的会话密钥打开箱子，读取你的信。反之亦然。</p><p>连接结束：当你们的对话结束，你们会丢掉这个会话密钥，如果下次还要交谈，就重新生成一个新的会话密钥。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span><span class=lnt>55
+</span><span class=lnt>56
+</span><span class=lnt>57
+</span><span class=lnt>58
+</span><span class=lnt>59
+</span><span class=lnt>60
+</span><span class=lnt>61
+</span><span class=lnt>62
+</span><span class=lnt>63
+</span><span class=lnt>64
+</span><span class=lnt>65
+</span><span class=lnt>66
+</span><span class=lnt>67
+</span><span class=lnt>68
+</span><span class=lnt>69
+</span><span class=lnt>70
+</span><span class=lnt>71
+</span><span class=lnt>72
+</span><span class=lnt>73
+</span><span class=lnt>74
+</span><span class=lnt>75
+</span><span class=lnt>76
+</span><span class=lnt>77
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>首先 当一个网站需要开启https访问的时候 他就必须要先有一个网站的证书
+</span></span><span class=line><span class=cl>网站的证书的话又需要交到CA机构那里去申请 但是在申请证书之前我们又需要有一对公私钥
+</span></span><span class=line><span class=cl>这对公私钥 就是我们在进行tls加密的时候必须要用到的
+</span></span><span class=line><span class=cl>所以说我们又先要来了解一下这对公私钥
+</span></span><span class=line><span class=cl>这对公私钥的作用主要就是用来进行非对称加密的
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>假设我现在对 网站证书 这几个字进行加密
+</span></span><span class=line><span class=cl>我加密的时候 如果使用的是私钥对它进行加密的话
+</span></span><span class=line><span class=cl>加面之后的内容完全看不见 我要解密的话 必须使用公钥去给它解密
+</span></span><span class=line><span class=cl>它才能解密成原来的数据内容 你如果还是使用私钥去给它解密的话 它是解不出来的
+</span></span><span class=line><span class=cl>这就是非对称加密算法的一种特性 反过来 如果我用公钥对这一串数据进行加密的话
+</span></span><span class=line><span class=cl>我要解的话 也必须用私钥对他进行解密才能解读出来 你如果用公钥去给他解密的话
+</span></span><span class=line><span class=cl>你是解不出来的 这就是非对称加密算法
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>有了这个基本概念之后 我们就可以来探索一下我们申请证书的一个流程
+</span></span><span class=line><span class=cl>首先申请证书的话 我们需要到这个CA机构这里去申请
+</span></span><span class=line><span class=cl>首先的话 我们的这个服务器生成了这么一个请求
+</span></span><span class=line><span class=cl>我要申请证书 我要给这个baidu.com的域名申请证书 然后我的公钥是123
+</span></span><span class=line><span class=cl>这就是申请证书里面必须要包含的内容 你发到这个是A机构这里去
+</span></span><span class=line><span class=cl>所以这个拿到你这个申请表一看 你申请一个证书
+</span></span><span class=line><span class=cl>他说好 但是你要证明这个域名是你的
+</span></span><span class=line><span class=cl>我才能给你下发证书 证明的方式有很多种 假设 他说 在你的网站目录下放个文件 等一下 我过来看一下
+</span></span><span class=line><span class=cl>如果你确实能把这个文件放在你这个网站的话
+</span></span><span class=line><span class=cl>那说明你确实能控制这个域名 也就是说 这个域名确实是你的
+</span></span><span class=line><span class=cl>然后我才能给你颁发证书
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>给了你一个证书 证书拿好 里面包含了是哪个机构给你颁发的
+</span></span><span class=line><span class=cl>这个是A机构 颁发给这个域名的 然后他有一个有效期
+</span></span><span class=line><span class=cl>同时也有你的公钥 这就是你申请的这个网站证书里面的一些基本信息
+</span></span><span class=line><span class=cl>有了这个证书之后 我们才能建立https的连接
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>ok 现在我们这个网站证书也有了 网站也已经搭建了
+</span></span><span class=line><span class=cl>现在又要开始进行https的访问了 在http阶段 我们生成了这么一个数据包
+</span></span><span class=line><span class=cl>然后由于我们开起来https然后他就会把这个数据往tls里面扔
+</span></span><span class=line><span class=cl>刚扔进来之后 他不会立刻对数据进行加密 因为我们现在根本就不知道加密的密钥
+</span></span><span class=line><span class=cl>所以说tls我们要先进行握手连接
+</span></span><span class=line><span class=cl>也就是要先跟这个网站建立一个tls的连接 首先的话 tls是跟这个网站说我要用https访问你
+</span></span><span class=line><span class=cl>然后我这边的话也开起来https的访问 这台服务器的话就会同意这个连接请求
+</span></span><span class=line><span class=cl>给他回一个 那你连接连呗 同时的话会把他的这个网站证书发送给你
+</span></span><span class=line><span class=cl>这是我的证书 你看一下行不行
+</span></span><span class=line><span class=cl>这个时候 你拿到这个证书 你就会对他进行一些验证 比如说 他是颁发给谷歌的
+</span></span><span class=line><span class=cl>然后你比对一下我确实是访问谷歌 这里对上了 然后他的颁发机构是a的话
+</span></span><span class=line><span class=cl>我的电脑里面有一个授信任的根证书颁发机构 里面有a 也就是说我信任
+</span></span><span class=line><span class=cl>这个机构颁发的证书 同时它的有效期是多少 现在的话还没过期 也就是说条件都满足了
+</span></span><span class=line><span class=cl>这个证书就是有效的 我就可以和他进行连接
+</span></span><span class=line><span class=cl>如果说有其中一个条件不满足的话 浏览器就会报警
+</span></span><span class=line><span class=cl>提示我们连接不安全 所以连接不安全的情况下有非常多的可能
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>我们这边收到服务器给我们的证书之后 发现证书是有效的
+</span></span><span class=line><span class=cl>于是乎 我们就可以用它的这个公钥对我们的数据内容进行加密
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>这里要申明一下 我们的tls并不是直接使用公钥来对这一串数据内容进行加密的
+</span></span><span class=line><span class=cl>他们之间的握手最终会协商出一个对称加密算法的密钥
+</span></span><span class=line><span class=cl>来对我们的数据进行加密 因为对称加密算法的效率很高
+</span></span><span class=line><span class=cl>如果所有的数据都用非对称加密上法进行加密的话
+</span></span><span class=line><span class=cl>那效率是非常低的 他的具体的握手协商流程的话 如果你感兴趣的话 可以自行去搜索
+</span></span><span class=line><span class=cl>我们这里的话仅仅是简单的讲解一下它的执行流程
+</span></span><span class=line><span class=cl>为了能够让大家简单的理解 我们这里就不那么严谨了
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>这个经过加密后的数据的话就会从我们的电脑发送到网络上面去
+</span></span><span class=line><span class=cl>防火墙这边拿的数据一看这边是经过了加密的 所以它是看不到里面的内容 也修改不了里面的数据
+</span></span><span class=line><span class=cl>如果他想强行的对这一串数据进行中间人攻击 进行拦截或者篡改的话 网站的证书的话就会不匹配
+</span></span><span class=line><span class=cl>所以我们的浏览器就会报警 如果你在浏览器看到了警告的信息的话
+</span></span><span class=line><span class=cl>建议检查一下是否存在中间人攻击的这么一种情况
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>有的朋友可能会有这样的疑问 为什么不把我们的网址也进行加密 不加密的原因是可能这个服务器它不只运行了一个网站
+</span></span><span class=line><span class=cl>除了谷歌之外 他可能youtube也在这个服务器上面 但是他只有一个ip
+</span></span><span class=line><span class=cl>我们如果把这一串也进行加密了的话 他把这个数据发到这个服务器上面去
+</span></span><span class=line><span class=cl>那服务器就不知道用哪个证书的私钥去进行解密 因为每个网站它都有自己的证书
+</span></span><span class=line><span class=cl>而每个证书所用的公钥和私钥它是不一样的
+</span></span><span class=line><span class=cl>所以说这一串的话必须是明文的 他有一个名称叫做sni
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>这个后面的话我们也会经常用到 当然 我这里说的是tls1.2的情况
+</span></span><span class=line><span class=cl>1.3的话 他可以对这个sni进行加密 也就是esni 在传输的过程中 这个网址他也可以给你进行加密
+</span></span><span class=line><span class=cl>也就他只露出了一个ip地址 但是这个的话目前还没有普及
+</span></span><span class=line><span class=cl>而且据说防火墙会直接丢弃esni加密后的这个数据包流量
+</span></span><span class=line><span class=cl>因为他看不到网址 他不知道你访问的是哪个网站
+</span></span></code></pre></td></tr></table></div></div></section><footer class=article-footer><section class=article-tags><a href=/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%BE%AE%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/>计算机网络微课堂笔记</a></section><section class=article-copyright><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><path d="M14.5 9a3.5 4 0 100 6"/></svg><span>Licensed under CC BY-NC-SA 4.0</span></section></footer><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/katex.min.css integrity="sha256-J+iAE0sgH8QSz9hpcDxXIftnj65JEZgNhGcgReTTK9s=" crossorigin=anonymous><script src=https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/katex.min.js integrity="sha256-InsNdER1b2xUewP+pKCUJpkhiqwHgqiPXDlIk7GzBu4=" crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/contrib/auto-render.min.js integrity="sha256-y39Mpg7V3D4lhBX4x6O0bUqTV4pSrfgwEfGKfxkOdgI=" crossorigin=anonymous defer></script><script>window.addEventListener("DOMContentLoaded",()=>{renderMathInElement(document.querySelector(`.article-content`),{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1},{left:"\\(",right:"\\)",display:!1},{left:"\\[",right:"\\]",display:!0}]})})</script></article><aside class=related-content--wrapper><h2 class=section-title>相关文章</h2><div class=related-content><div class="flex article-list--tile"><article><a href=/p/i-%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%BE%AE%E8%AF%BE%E5%A0%82-%E6%A6%82%E8%BF%B0/><div class=article-details><h2 class=article-title>I: 计算机网络微课堂-概述</h2></div></a></article><article><a href=/p/ii-%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%BE%AE%E8%AF%BE%E5%A0%82-%E7%89%A9%E7%90%86%E5%B1%82/><div class=article-details><h2 class=article-title>II: 计算机网络微课堂-物理层</h2></div></a></article><article><a href=/p/iii-%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%BE%AE%E8%AF%BE%E5%A0%82-%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/><div class=article-details><h2 class=article-title>III: 计算机网络微课堂-数据链路层</h2></div></a></article><article><a href=/p/v-%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%BE%AE%E8%AF%BE%E5%A0%82-%E8%BF%90%E8%BE%93%E5%B1%82/><div class=article-details><h2 class=article-title>V: 计算机网络微课堂-运输层</h2></div></a></article><article><a href=/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%BE%AE%E8%AF%BE%E5%A0%82-%E7%BD%91%E7%BB%9C%E5%B1%82/><div class=article-details><h2 class=article-title>Ⅳ: 计算机网络微课堂-网络层</h2></div></a></article></div></div></aside><footer class=site-footer><section class=copyright>&copy;
+2023 importzhh的小破站</section><section class=powerby>Built with <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a><br>主题 <b><a href=https://github.com/CaiJimmy/hugo-theme-stack target=_blank rel=noopener data-version=3.16.0>Stack</a></b> 由 <a href=https://jimmycai.com target=_blank rel=noopener>Jimmy</a> 设计</section></footer><div class=pswp tabindex=-1 role=dialog aria-hidden=true><div class=pswp__bg></div><div class=pswp__scroll-wrap><div class=pswp__container><div class=pswp__item></div><div class=pswp__item></div><div class=pswp__item></div></div><div class="pswp__ui pswp__ui--hidden"><div class=pswp__top-bar><div class=pswp__counter></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<button class="pswp__button pswp__button--share" title=Share></button>
+<button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button><div class=pswp__preloader><div class=pswp__preloader__icn><div class=pswp__preloader__cut><div class=pswp__preloader__donut></div></div></div></div></div><div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"><div class=pswp__share-tooltip></div></div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)"></button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class=pswp__caption><div class=pswp__caption__center></div></div></div></div></div><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo=" crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU=" crossorigin=anonymous defer></script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css crossorigin=anonymous><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css crossorigin=anonymous></main></div><script src=https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z+KMkF24hUW8WePSA9HM=" crossorigin=anonymous></script><script type=text/javascript src=/ts/main.js defer></script>
+<script>(function(){const e=document.createElement("link");e.href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap",e.type="text/css",e.rel="stylesheet",document.head.appendChild(e)})()</script></body></html>

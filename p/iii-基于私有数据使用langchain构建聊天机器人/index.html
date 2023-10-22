@@ -1,0 +1,1087 @@
+<!doctype html><html lang=zh-cn dir=ltr><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="https://www.deeplearning.ai/short-courses/langchain-chat-with-your-data/ 文档加载 文档加载器的介绍 文档加载器的作用，是将不同格式和来源的数据加载到标准的文档对象中，包括内容本身以及关联的元数据。 LangChain"><title>III: 基于私有数据使用LangChain构建聊天机器人</title><link rel=canonical href=https://blog.importzhh.me/p/iii-%E5%9F%BA%E4%BA%8E%E7%A7%81%E6%9C%89%E6%95%B0%E6%8D%AE%E4%BD%BF%E7%94%A8langchain%E6%9E%84%E5%BB%BA%E8%81%8A%E5%A4%A9%E6%9C%BA%E5%99%A8%E4%BA%BA/><link rel=stylesheet href=/scss/style.min.0d8902b26558cddb5286ea49f2a7aadd5761ed898547e29e5ab572d8c0619ba6.css><meta property="og:title" content="III: 基于私有数据使用LangChain构建聊天机器人"><meta property="og:description" content="https://www.deeplearning.ai/short-courses/langchain-chat-with-your-data/ 文档加载 文档加载器的介绍 文档加载器的作用，是将不同格式和来源的数据加载到标准的文档对象中，包括内容本身以及关联的元数据。 LangChain"><meta property="og:url" content="https://blog.importzhh.me/p/iii-%E5%9F%BA%E4%BA%8E%E7%A7%81%E6%9C%89%E6%95%B0%E6%8D%AE%E4%BD%BF%E7%94%A8langchain%E6%9E%84%E5%BB%BA%E8%81%8A%E5%A4%A9%E6%9C%BA%E5%99%A8%E4%BA%BA/"><meta property="og:site_name" content="importzhh的小破站"><meta property="og:type" content="article"><meta property="article:section" content="Post"><meta property="article:tag" content="LangChain"><meta property="article:published_time" content="2023-08-30T12:44:47+08:00"><meta property="article:modified_time" content="2023-08-30T12:44:47+08:00"><meta name=twitter:title content="III: 基于私有数据使用LangChain构建聊天机器人"><meta name=twitter:description content="https://www.deeplearning.ai/short-courses/langchain-chat-with-your-data/ 文档加载 文档加载器的介绍 文档加载器的作用，是将不同格式和来源的数据加载到标准的文档对象中，包括内容本身以及关联的元数据。 LangChain"><link rel="shortcut icon" href=/favicon.ico></head><body class=article-page><script>(function(){const e="StackColorScheme";localStorage.getItem(e)||localStorage.setItem(e,"auto")})()</script><script>(function(){const t="StackColorScheme",e=localStorage.getItem(t),n=window.matchMedia("(prefers-color-scheme: dark)").matches===!0;e=="dark"||e==="auto"&&n?document.documentElement.dataset.scheme="dark":document.documentElement.dataset.scheme="light"})()</script><div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky"><button class="hamburger hamburger--spin" type=button id=toggle-menu aria-label=切换菜单>
+<span class=hamburger-box><span class=hamburger-inner></span></span></button><header><figure class=site-avatar><a href=/><img src=/img/avatar_huce6e906a97de2553354850eae15a0392_8624_300x0_resize_box_3.png width=300 height=300 class=site-logo loading=lazy alt=Avatar></a>
+<span class=emoji>🍥</span></figure><div class=site-meta><h1 class=site-name><a href=/>importzhh的小破站</a></h1><h2 class=site-description>实事求是 思危思退思变</h2></div></header><ol class=social-menu><li><a href=https://github.com/importzhh target=_blank title=GitHub rel=me><svg width="800" height="800" viewBox="-1.65 0 259.3 259.3" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid"><g><path fill="#9edcf2" d="M200.9 199.8c0 13.9-32.2 25.1-71.9 25.1-39.7.0-71.9-11.3-71.9-25.1.0-13.9 32.2-25.1 71.9-25.1C168.7 174.7 200.9 185.9 200.9 199.8zm0 0"/><g><defs><path id="SVGID_1_" d="M98.1 244.8c1.6 7.5 5.5 11.9 9.4 14.5h41.1c5-3.4 10.1-9.8 10.1-21.8v-31s.6-7.7 7.7-10.2c0 0 4.1-2.9-.3-4.5.0.0-19.5-1.6-19.5 14.4v23.6s.8 8.7-3.8 12.3v-29.2s.3-9.3 5.1-12.8c0 0 3.2-5.7-3.8-4.2.0.0-13.4 1.9-14 17.6l-.3 30h-3.2l-.3-30c-.6-15.6-14-17.6-14-17.6-7-1.6-3.8 4.2-3.8 4.2 4.8 3.5 5.1 12.8 5.1 12.8v29.5c-4.6-3.3-3.8-12.6-3.8-12.6v-23.6c0-16-19.5-14.4-19.5-14.4-4.5 1.6-.3 4.5-.3 4.5 7 2.6 7.7 10.2 7.7 10.2v21.7L98.1 244.8z"/></defs><clipPath id="SVGID_2_"><use xlink:href="#SVGID_1_" overflow="visible"/></clipPath><path clip-path="url(#SVGID_2_)" fill="#7dbce7" d="M200.9 199.8c0 13.9-32.2 25.1-71.9 25.1-39.7.0-71.9-11.3-71.9-25.1.0-13.9 32.2-25.1 71.9-25.1C168.7 174.7 200.9 185.9 200.9 199.8zm0 0"/></g><path fill="#9edcf2" d="M46.9 125.9l-2.1 7.2s-.5 2.6 1.9 3.1c2.6-.1 2.4-2.5 2.2-3.2L46.9 125.9zm0 0"/><path fill="#010101" d="M255.8 95.6l.2-.9c-21.1-4.2-42.7-4.3-55.8-3.7 2.1-7.7 2.8-16.7 2.8-26.6.0-14.3-5.4-25.7-14-34.3 1.5-4.9 3.5-15.8-2-29.7.0.0-9.8-3.1-32.1 11.8-8.7-2.2-18-3.3-27.3-3.3-10.2.0-20.5 1.3-30.2 3.9C74.4-2.9 64.3.3 64.3.3c-6.6 16.5-2.5 28.8-1.3 31.8-7.8 8.4-12.5 19.1-12.5 32.2.0 9.9 1.1 18.8 3.9 26.5-13.2-.5-34-.3-54.4 3.8l.2.9c20.4-4.1 41.4-4.2 54.5-3.7.6 1.6 1.3 3.2 2 4.7-13 .4-35.1 2.1-56.3 8.1l.3.9c21.4-6 43.7-7.6 56.6-8 7.8 14.4 23 23.8 50.2 26.7-3.9 2.6-7.8 7-9.4 14.5-5.3 2.5-21.9 8.7-31.9-8.5.0.0-5.6-10.2-16.3-11 0 0-10.4-.2-.7 6.5.0.0 6.9 3.3 11.7 15.6.0.0 6.3 21 36.4 14.2V177s-.6 7.7-7.7 10.2c0 0-4.2 2.9.3 4.5.0.0 19.5 1.6 19.5-14.4v-23.6s-.8-9.4 3.8-12.6v38.8s-.3 9.3-5.1 12.8c0 0-3.2 5.7 3.8 4.2.0.0 13.4-1.9 14-17.6l.3-39.3h3.2l.3 39.3c.6 15.6 14 17.6 14 17.6 7 1.6 3.8-4.2 3.8-4.2-4.8-3.5-5.1-12.8-5.1-12.8v-38.5c4.6 3.6 3.8 12.3 3.8 12.3v23.6c0 16 19.5 14.4 19.5 14.4 4.5-1.6.3-4.5.3-4.5-7-2.6-7.7-10.2-7.7-10.2v-31c0-12.1-5.1-18.5-10.1-21.8 29-2.9 42.9-12.2 49.3-26.8 12.7.3 35.6 1.9 57.4 8.1l.3-.9c-21.7-6.1-44.4-7.7-57.3-8.1.6-1.5 1.1-3 1.6-4.6C212.9 91.4 234.6 91.4 255.8 95.6zm0 0"/><path fill="#f5ccb3" d="M174.6 63.7c6.2 5.7 9.9 12.5 9.9 19.8.0 34.4-25.6 35.3-57.2 35.3S70.1 114 70.1 83.5c0-7.3 3.6-14.1 9.8-19.7 10.3-9.4 27.7-4.4 47.4-4.4 19.7.0 37-5.1 47.3 4.3zm0 0"/><path fill="#fff" d="M108.3 85.3c0 9.5-5.3 17.1-11.9 17.1-6.6.0-11.9-7.7-11.9-17.1.0-9.5 5.3-17.1 11.9-17.1C103 68.1 108.3 75.8 108.3 85.3zm0 0"/><path fill="#af5c51" d="M104.5 85.5c0 6.3-3.6 11.4-7.9 11.4-4.4.0-7.9-5.1-7.9-11.4.0-6.3 3.6-11.4 7.9-11.4S104.5 79.2 104.5 85.5zm0 0"/><path fill="#fff" d="M172.2 85.3c0 9.5-5.3 17.1-11.9 17.1s-11.9-7.7-11.9-17.1c0-9.5 5.3-17.1 11.9-17.1C166.8 68.1 172.2 75.8 172.2 85.3zm0 0"/><path fill="#af5c51" d="M168.3 85.5c0 6.3-3.6 11.4-7.9 11.4-4.4.0-7.9-5.1-7.9-11.4.0-6.3 3.6-11.4 7.9-11.4C164.8 74.1 168.3 79.2 168.3 85.5zm0 0"/><path fill="#af5c51" d="M130.5 100.5c0 1.6-1.3 3-3 3-1.6.0-3-1.3-3-3s1.3-3 3-3c1.59999999999999.0 3 1.3 3 3zm0 0"/><path fill="#af5c51" d="M120.6 108c-.2-.5.1-1 .6-1.2s1 .1 1.2.6c.8 2.2 2.8 3.6 5.1 3.6s4.3-1.5 5.1-3.6c.2-.5.7-.8 1.2-.6s.8.7.6 1.2c-1 2.9-3.8 4.9-6.9 4.9C124.4 112.9 121.6 110.9 120.6 108zm0 0"/><path fill="#c4e5d9" d="M54.5 121.6c0 .8-.9 1.4-2.1 1.4-1.1.0-2.1-.6-2.1-1.4.0-.8.9-1.4 2.1-1.4C53.6 120.2 54.5 120.8 54.5 121.6zm0 0"/><path fill="#c4e5d9" d="M60.3 124.8c0 .8-.9 1.4-2.1 1.4-1.1.0-2.1-.6-2.1-1.4.0-.8.9-1.4 2.1-1.4C59.4 123.4 60.3 124 60.3 124.8zm0 0"/><path fill="#c4e5d9" d="M63.8 129c0 .8-.9 1.4-2.1 1.4-1.1.0-2.1-.6-2.1-1.4s.9-1.4 2.1-1.4C62.9 127.5 63.8 128.2 63.8 129zm0 0"/><path fill="#c4e5d9" d="M67 133.8c0 .8-.9 1.4-2.1 1.4-1.1.0-2.1-.6-2.1-1.4s.9-1.4 2.1-1.4C66.1 132.3 67 133 67 133.8zm0 0"/><path fill="#c4e5d9" d="M70.5 138.2c0 .8-.9 1.4-2.1 1.4-1.1.0-2.1-.6-2.1-1.4s.9-1.4 2.1-1.4C69.6 136.8 70.5 137.4 70.5 138.2zm0 0"/><path fill="#c4e5d9" d="M75.3 142.1c0 .8-.9 1.4-2.1 1.4-1.1.0-2.1-.6-2.1-1.4s.9-1.4 2.1-1.4C74.4 140.6 75.3 141.3 75.3 142.1zm0 0"/><path fill="#c4e5d9" d="M82 144.6c0 .8-.9 1.4-2.1 1.4-1.1.0-2.1-.6-2.1-1.4s.9-1.4 2.1-1.4S82 143.8 82 144.6zm0 0"/><path fill="#c4e5d9" d="M88.7 144.6c0 .8-.9 1.4-2.1 1.4-1.1.0-2.1-.6-2.1-1.4s.9-1.4 2.1-1.4S88.7 143.8 88.7 144.6zm0 0"/><path fill="#c4e5d9" d="M95.5 143.5c0 .8-.9 1.4-2.1 1.4-1.1.0-2.1-.6-2.1-1.4s.9-1.4 2.1-1.4C94.5 142.1 95.5 142.7 95.5 143.5zm0 0"/></g></svg></a></li></ol><ol class=menu id=main-menu><li><a href=/><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><polyline points="5 12 3 12 12 3 21 12 19 12"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/><path d="M9 21v-6a2 2 0 012-2h2a2 2 0 012 2v6"/></svg><span>Home</span></a></li><li><a href=/archives/><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><rect x="3" y="4" width="18" height="4" rx="2"/><path d="M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8"/><line x1="10" y1="12" x2="14" y2="12"/></svg><span>Archives</span></a></li><li><a href=/search/><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="10" cy="10" r="7"/><line x1="21" y1="21" x2="15" y2="15"/></svg><span>Search</span></a></li><li><a href=/links/><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M10 14a3.5 3.5.0 005 0l4-4a3.5 3.5.0 00-5-5l-.5.5"/><path d="M14 10a3.5 3.5.0 00-5 0l-4 4a3.5 3.5.0 005 5l.5-.5"/></svg><span>Links</span></a></li><div class=menu-bottom-section><li id=dark-mode-toggle><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="8" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="16" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg><span>暗色模式</span></li></div></ol></aside><aside class="sidebar right-sidebar sticky"><section class="widget archives"><div class=widget-icon><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><line x1="5" y1="9" x2="19" y2="9"/><line x1="5" y1="15" x2="19" y2="15"/><line x1="11" y1="4" x2="7" y2="20"/><line x1="17" y1="4" x2="13" y2="20"/></svg></div><h2 class="widget-title section-title">目录</h2><div class=widget--toc><nav id=TableOfContents><ol><li><a href=#文档加载>文档加载</a><ol><li><a href=#文档加载器的介绍>文档加载器的介绍</a></li></ol></li><li><a href=#加载pdf文档>加载PDF文档</a></li><li><a href=#加载youtube视频>加载YouTube视频</a><ol><li><a href=#步骤1导入几个关键部分包括>步骤1：导入几个关键部分，包括</a></li><li><a href=#步骤2指定url及保存音频文件的目录创建组合了步骤1两个关键部分的通用加载器并执行加载>步骤2：指定URL及保存音频文件的目录，创建组合了步骤1两个关键部分的通用加载器并执行加载</a></li><li><a href=#步骤3查看加载完成的视频文稿>步骤3：查看加载完成的视频文稿</a></li></ol></li><li><a href=#加载网络url>加载网络URL</a></li><li><a href=#文档分割>文档分割</a></li><li><a href=#文档分割的重要性>文档分割的重要性</a></li><li><a href=#文档分割的方式>文档分割的方式</a></li><li><a href=#基于字符的分割>基于字符的分割</a><ol><li><a href=#步骤1导入文本分割器>步骤1：导入文本分割器</a></li><li><a href=#步骤2设定块大小和块重叠大小>步骤2：设定块大小和块重叠大小</a></li><li><a href=#步骤3初始化文本分割器>步骤3：初始化文本分割器</a></li><li><a href=#步骤4使用不同的分割器对字符串进行分割>步骤4：使用不同的分割器对字符串进行分割</a><ol><li><a href=#递归字符文本分割器>递归字符文本分割器</a></li><li><a href=#字符文本分割器>字符文本分割器</a></li></ol></li><li><a href=#步骤5递归分割长段落>步骤5：递归分割长段落</a></li></ol></li><li><a href=#基于token的分割>基于Token的分割</a></li><li><a href=#分割markdown文档>分割Markdown文档</a><ol><li><a href=#步骤1定义一个markdown文档>步骤1：定义一个Markdown文档</a></li><li><a href=#步骤2定义想要分割的标题列表和名称>步骤2：定义想要分割的标题列表和名称</a></li><li><a href=#步骤3初始化markdown标题文本切分器分割markdown文档>步骤3：初始化Markdown标题文本切分器，分割Markdown文档</a></li></ol></li><li><a href=#向量存储和嵌入>向量存储和嵌入</a><ol><li><a href=#步骤1提供一些例句其中前两句非常相似第三句则与前两句关联不大>步骤1：提供一些例句，其中前两句非常相似，第三句则与前两句关联不大</a></li><li><a href=#步骤2使用embbeding类为每个句子生成一个嵌入>步骤2：使用Embbeding类为每个句子生成一个嵌入</a></li><li><a href=#步骤3用点积dot-product来计算两两之间的嵌入相似度>步骤3：用点积(dot product)来计算两两之间的嵌入相似度</a></li><li><a href=#步骤1加载pdf文档>步骤1：加载PDF文档</a></li><li><a href=#步骤2用递归字符文本分割器来把文档分成块>步骤2：用递归字符文本分割器来把文档分成块</a></li><li><a href=#步骤3为每个块生成嵌入并创建chroma向量存储>步骤3：为每个块生成嵌入，并创建Chroma向量存储</a></li><li><a href=#步骤4用相似性搜索方法来查找文档>步骤4：用相似性搜索方法来查找文档</a></li><li><a href=#步骤5持久化向量数据库以便以后使用>步骤5：持久化向量数据库，以便以后使用</a></li><li><a href=#失败情况1重复的块导致重复的冗余信息>失败情况1：重复的块导致重复的冗余信息</a></li><li><a href=#失败情况2无法完整捕捉到问题中的关键信息>失败情况2：无法完整捕捉到问题中的关键信息</a></li><li><a href=#失败情况3随着检索文档数量的增加相关性逐渐降低>失败情况3：随着检索文档数量的增加，相关性逐渐降低</a></li></ol></li><li><a href=#检索>检索</a></li><li><a href=#解决多样性最大边缘相关性>解决多样性：最大边缘相关性</a><ol><li><a href=#步骤1创建chroma向量存储>步骤1：创建Chroma向量存储</a></li><li><a href=#步骤2用少量信息创建一个小型数据库>步骤2：用少量信息创建一个小型数据库</a></li><li><a href=#步骤3进行相似性搜索>步骤3：进行相似性搜索</a></li><li><a href=#步骤4进行mmr搜索>步骤4：进行MMR搜索</a></li></ol></li><li><a href=#解决特殊性使用自查询检索器处理元数据>解决特殊性：使用自查询检索器处理元数据</a><ol><li><a href=#步骤1提供元数据字段信息>步骤1：提供元数据字段信息</a></li><li><a href=#步骤2初始化自查询检索器>步骤2：初始化自查询检索器</a></li><li><a href=#步骤3运行自查询检索器搜索问题>步骤3：运行自查询检索器搜索问题</a></li></ol></li><li><a href=#解决相关性使用上下文压缩提取出与查询最相关的部分>解决相关性：使用上下文压缩提取出与查询最相关的部分</a><ol><li><a href=#步骤1创建上下文压缩检索器>步骤1：创建上下文压缩检索器</a></li><li><a href=#步骤2提出问题检索压缩后的相关文档>步骤2：提出问题，检索压缩后的相关文档</a></li></ol></li><li><a href=#问答>问答</a></li><li><a href=#stuff>stuff</a><ol><li><a href=#步骤1加载之前保存的向量数据库>步骤1：加载之前保存的向量数据库</a></li><li><a href=#步骤2初始化将用于回答问题的语言模型>步骤2：初始化将用于回答问题的语言模型</a></li><li><a href=#步骤3导入创建调用检索问答链输入问题并获取答案>步骤3：导入、创建、调用检索问答链，输入问题，并获取答案</a></li><li><a href=#步骤4使用提示模板优化输出结果>步骤4：使用提示模板优化输出结果</a></li><li><a href=#步骤5查看返回的源文档理解其从哪里获取数据>步骤5：查看返回的源文档，理解其从哪里获取数据</a></li></ol></li><li><a href=#map-reduce>Map-reduce</a><ol><li><a href=#使用langsmith平台了解这些链内部的调用情况>使用LangSmith平台了解这些链内部的调用情况</a></li></ol></li><li><a href=#refine>Refine</a></li><li><a href=#chat>Chat</a><ol><li><a href=#步骤1初始化用于保存大量文档内容的向量数据库>步骤1：初始化用于保存大量文档内容的向量数据库</a></li><li><a href=#步骤2初始化将作为聊天机器人使用的语言模型>步骤2：初始化将作为聊天机器人使用的语言模型</a></li><li><a href=#步骤3初始化提示模板让输出结果更简介更少编造更礼貌>步骤3：初始化提示模板，让输出结果更简介、更少编造、更礼貌</a></li><li><a href=#步骤4创建检索qa链用于合并检索到的文本片段并调用语言模型>步骤4：创建检索QA链，用于合并检索到的文本片段并调用语言模型</a></li><li><a href=#步骤5使用conversationbuffermemory增加聊天机器人的记忆功能>步骤5：使用ConversationBufferMemory增加聊天机器人的记忆功能</a></li><li><a href=#步骤6创建conversationalretrievalchain对话检索链传入语言模型检索器和记忆系统>步骤6：创建ConversationalRetrievalChain（对话检索链），传入语言模型、检索器和记忆系统</a></li><li><a href=#步骤7使用pypdfloader加载所要参考的文档>步骤7：使用PyPDFLoader加载所要参考的文档</a></li><li><a href=#步骤8分割文档为每个分块创建嵌入并存储到向量存储库中>步骤8：分割文档，为每个分块创建嵌入，并存储到向量存储库中。</a></li><li><a href=#步骤9从向量数据库创建一个基于相似度的检索器>步骤9：从向量数据库创建一个基于“相似度”的检索器。</a></li><li><a href=#步骤10创建对话检索链用于将聊天历史和新提的问题整合成一个新的独立问题>步骤10：创建对话检索链，用于将聊天历史和新提的问题整合成一个新的独立问题</a></li><li><a href=#步骤11提供一个与聊天机器人交互的用户界面>步骤11：提供一个与聊天机器人交互的用户界面</a></li><li><a href=#步骤12在运行起来的用户界面上进行实际的问答对话>步骤12：在运行起来的用户界面上进行实际的问答对话。</a></li></ol></li></ol></nav></div></section></aside><main class="main full-width"><article class=main-article><header class=article-header><div class=article-details><header class=article-category><a href=/categories/chatgpt/>chatgpt</a></header><div class=article-title-wrapper><h2 class=article-title><a href=/p/iii-%E5%9F%BA%E4%BA%8E%E7%A7%81%E6%9C%89%E6%95%B0%E6%8D%AE%E4%BD%BF%E7%94%A8langchain%E6%9E%84%E5%BB%BA%E8%81%8A%E5%A4%A9%E6%9C%BA%E5%99%A8%E4%BA%BA/>III: 基于私有数据使用LangChain构建聊天机器人</a></h2></div><footer class=article-time><div><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M11.795 21H5a2 2 0 01-2-2V7a2 2 0 012-2h12a2 2 0 012 2v4"/><circle cx="18" cy="18" r="4"/><path d="M15 3v4"/><path d="M7 3v4"/><path d="M3 11h16"/><path d="M18 16.496V18l1 1"/></svg><time class=article-time--published>Aug 30, 2023</time></div><div><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg><time class=article-time--reading>阅读时长: 21 分钟</time></div></footer></div></header><section class=article-content><p><a class=link href=https://www.deeplearning.ai/short-courses/langchain-chat-with-your-data/ target=_blank rel=noopener>https://www.deeplearning.ai/short-courses/langchain-chat-with-your-data/</a></p><div class=video-wrapper><iframe src="https://player.bilibili.com/player.html?as_wide=1&amp;high_quality=1&amp;page=1&bvid=BV148411D7d2" scrolling=no frameborder=no framespacing=0 allowfullscreen></iframe></div><h2 id=文档加载>文档加载</h2><h3 id=文档加载器的介绍>文档加载器的介绍</h3><p><img src=/p/iii-%E5%9F%BA%E4%BA%8E%E7%A7%81%E6%9C%89%E6%95%B0%E6%8D%AE%E4%BD%BF%E7%94%A8langchain%E6%9E%84%E5%BB%BA%E8%81%8A%E5%A4%A9%E6%9C%BA%E5%99%A8%E4%BA%BA/iShot_2023-08-30_21.52.56.png width=2660 height=1534 srcset="/p/iii-%E5%9F%BA%E4%BA%8E%E7%A7%81%E6%9C%89%E6%95%B0%E6%8D%AE%E4%BD%BF%E7%94%A8langchain%E6%9E%84%E5%BB%BA%E8%81%8A%E5%A4%A9%E6%9C%BA%E5%99%A8%E4%BA%BA/iShot_2023-08-30_21.52.56_hu35b481662af1b15e039db616f3621f6d_1037567_480x0_resize_box_3.png 480w, /p/iii-%E5%9F%BA%E4%BA%8E%E7%A7%81%E6%9C%89%E6%95%B0%E6%8D%AE%E4%BD%BF%E7%94%A8langchain%E6%9E%84%E5%BB%BA%E8%81%8A%E5%A4%A9%E6%9C%BA%E5%99%A8%E4%BA%BA/iShot_2023-08-30_21.52.56_hu35b481662af1b15e039db616f3621f6d_1037567_1024x0_resize_box_3.png 1024w" loading=lazy class=gallery-image data-flex-grow=173 data-flex-basis=416px></p><p><img src=/p/iii-%E5%9F%BA%E4%BA%8E%E7%A7%81%E6%9C%89%E6%95%B0%E6%8D%AE%E4%BD%BF%E7%94%A8langchain%E6%9E%84%E5%BB%BA%E8%81%8A%E5%A4%A9%E6%9C%BA%E5%99%A8%E4%BA%BA/iShot_2023-08-30_21.55.22.png width=1818 height=1506 srcset="/p/iii-%E5%9F%BA%E4%BA%8E%E7%A7%81%E6%9C%89%E6%95%B0%E6%8D%AE%E4%BD%BF%E7%94%A8langchain%E6%9E%84%E5%BB%BA%E8%81%8A%E5%A4%A9%E6%9C%BA%E5%99%A8%E4%BA%BA/iShot_2023-08-30_21.55.22_huffd446c3382fce7d2972a3e463126577_748380_480x0_resize_box_3.png 480w, /p/iii-%E5%9F%BA%E4%BA%8E%E7%A7%81%E6%9C%89%E6%95%B0%E6%8D%AE%E4%BD%BF%E7%94%A8langchain%E6%9E%84%E5%BB%BA%E8%81%8A%E5%A4%A9%E6%9C%BA%E5%99%A8%E4%BA%BA/iShot_2023-08-30_21.55.22_huffd446c3382fce7d2972a3e463126577_748380_1024x0_resize_box_3.png 1024w" loading=lazy class=gallery-image data-flex-grow=120 data-flex-basis=289px></p><p><strong>文档加载器的作用，是将不同格式和来源的数据加载到标准的文档对象中，包括内容本身以及关联的元数据</strong>。</p><p><img src=/p/iii-%E5%9F%BA%E4%BA%8E%E7%A7%81%E6%9C%89%E6%95%B0%E6%8D%AE%E4%BD%BF%E7%94%A8langchain%E6%9E%84%E5%BB%BA%E8%81%8A%E5%A4%A9%E6%9C%BA%E5%99%A8%E4%BA%BA/iShot_2023-08-30_22.01.35.png width=1538 height=1646 srcset="/p/iii-%E5%9F%BA%E4%BA%8E%E7%A7%81%E6%9C%89%E6%95%B0%E6%8D%AE%E4%BD%BF%E7%94%A8langchain%E6%9E%84%E5%BB%BA%E8%81%8A%E5%A4%A9%E6%9C%BA%E5%99%A8%E4%BA%BA/iShot_2023-08-30_22.01.35_hu7ad7e39444b91dcc93dbdffa5607f287_871588_480x0_resize_box_3.png 480w, /p/iii-%E5%9F%BA%E4%BA%8E%E7%A7%81%E6%9C%89%E6%95%B0%E6%8D%AE%E4%BD%BF%E7%94%A8langchain%E6%9E%84%E5%BB%BA%E8%81%8A%E5%A4%A9%E6%9C%BA%E5%99%A8%E4%BA%BA/iShot_2023-08-30_22.01.35_hu7ad7e39444b91dcc93dbdffa5607f287_871588_1024x0_resize_box_3.png 1024w" loading=lazy class=gallery-image data-flex-grow=93 data-flex-basis=224px></p><p>LangChain提供了多种类型的文档加载器，用于处理非结构化数据，根据数据来源的不同大致可分为：</p><ul><li><p>公共数据源加载器，如YouTube、Twitter；</p></li><li><p>专有数据源加载器，如Figma、Notion。</p></li></ul><p>文档加载器也可以加载结构化数据，比如基于表格中包含的文本数据，对问题进行回答或语义搜索。</p><p>这种技术我们称之为检索增强生成（RAG，Retrieval-Augmented Generation）。</p><p><img src=/p/iii-%E5%9F%BA%E4%BA%8E%E7%A7%81%E6%9C%89%E6%95%B0%E6%8D%AE%E4%BD%BF%E7%94%A8langchain%E6%9E%84%E5%BB%BA%E8%81%8A%E5%A4%A9%E6%9C%BA%E5%99%A8%E4%BA%BA/iShot_2023-08-30_22.12.02.png width=2936 height=826 srcset="/p/iii-%E5%9F%BA%E4%BA%8E%E7%A7%81%E6%9C%89%E6%95%B0%E6%8D%AE%E4%BD%BF%E7%94%A8langchain%E6%9E%84%E5%BB%BA%E8%81%8A%E5%A4%A9%E6%9C%BA%E5%99%A8%E4%BA%BA/iShot_2023-08-30_22.12.02_hu8c292b7b52f1146895f28cac5e1cc60d_584276_480x0_resize_box_3.png 480w, /p/iii-%E5%9F%BA%E4%BA%8E%E7%A7%81%E6%9C%89%E6%95%B0%E6%8D%AE%E4%BD%BF%E7%94%A8langchain%E6%9E%84%E5%BB%BA%E8%81%8A%E5%A4%A9%E6%9C%BA%E5%99%A8%E4%BA%BA/iShot_2023-08-30_22.12.02_hu8c292b7b52f1146895f28cac5e1cc60d_584276_1024x0_resize_box_3.png 1024w" loading=lazy class=gallery-image data-flex-grow=355 data-flex-basis=853px></p><p><strong>在RAG中，LLM会从外部数据集中检索上下文文档，作为其执行的一部分，这对于询问特定文档的问题非常有用</strong>。</p><p>下面我们来实际使用其中的一些文档加载器。</p><h2 id=加载pdf文档>加载PDF文档</h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=c1># 导入PyPDFLoader文档加载器</span>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>langchain.document_loaders</span> <span class=kn>import</span> <span class=n>PyPDFLoader</span>
+</span></span><span class=line><span class=cl><span class=c1># 将位于特定路径下的PDF文档放入到加载器中</span>
+</span></span><span class=line><span class=cl><span class=n>loader</span> <span class=o>=</span> <span class=n>PyPDFLoader</span><span class=p>(</span><span class=s2>&#34;docs/cs229_lectures/MachineLearning-Lecture01.pdf&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=c1># 加载PDF文档</span>
+</span></span><span class=line><span class=cl><span class=n>pages</span> <span class=o>=</span> <span class=n>loader</span><span class=o>.</span><span class=n>load</span><span class=p>()</span>
+</span></span></code></pre></td></tr></table></div></div><p>默认情况下，这将加载一系列的文档。以页面为单位，每个页面都是一个独立的文档。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=c1># PDF的总页数</span>
+</span></span><span class=line><span class=cl><span class=nb>len</span><span class=p>(</span><span class=n>pages</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=c1># 22</span>
+</span></span></code></pre></td></tr></table></div></div><p>每个文档都包含「页面内容」和「与文档关联的元数据」。</p><p>页面内容：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=c1># 仅打印前500个字符</span>
+</span></span><span class=line><span class=cl><span class=nb>print</span><span class=p>(</span><span class=n>page</span><span class=o>.</span><span class=n>page_content</span><span class=p>[</span><span class=mi>0</span><span class=p>:</span><span class=mi>500</span><span class=p>])</span> 
+</span></span></code></pre></td></tr></table></div></div><blockquote><p>MachineLearning-Lecture01<br>Instructor (Andrew Ng): Okay. Good morning. Welcome to CS229, the machine learning class. So what I wanna do today is ju st spend a little time going over the logistics of the class, and then we&rsquo;ll start to talk a bit about machine learning.<br>By way of introduction, my name&rsquo;s Andrew Ng and I&rsquo;ll be instru ctor for this class. And so I personally work in machine learning, and I&rsquo; ve worked on it for about 15 years now, and I actually think that machine learning i</p></blockquote><p>元数据：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>page</span><span class=o>.</span><span class=n>metadata</span>
+</span></span><span class=line><span class=cl><span class=c1># source: 源信息，这里对应PDF的文件名</span>
+</span></span><span class=line><span class=cl><span class=c1># page：页码信息，这里对应PDF的页码</span>
+</span></span><span class=line><span class=cl><span class=c1># {&#39;source&#39;: &#39;docs/cs229_lectures/MachineLearning-Lecture01.pdf&#39;, &#39;page&#39;: 0}</span>
+</span></span></code></pre></td></tr></table></div></div><h2 id=加载youtube视频>加载YouTube视频</h2><h3 id=步骤1导入几个关键部分包括>步骤1：导入几个关键部分，包括</h3><ul><li><p>YouTube音频加载器：从YouTube视频加载音频文件</p></li><li><p>OpenAI Whisper解析器：使用OpenAI的Whisper模型(一个语音转文本的模型)，将YouTube音频转换为我们可以处理的文本格式</p></li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>from</span> <span class=nn>langchain.document_loaders.generic</span> <span class=kn>import</span> <span class=n>GenericLoader</span>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>langchain.document_loaders.parsers</span> <span class=kn>import</span> <span class=n>OpenAIWhisperParser</span>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>langchain.document_loaders.blob_loaders.youtube_audio</span> <span class=kn>import</span> <span class=n>YoutubeAudioLoader</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=步骤2指定url及保存音频文件的目录创建组合了步骤1两个关键部分的通用加载器并执行加载>步骤2：指定URL及保存音频文件的目录，创建组合了步骤1两个关键部分的通用加载器并执行加载</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>url</span><span class=o>=</span><span class=s2>&#34;https://www.youtube.com/watch?v=jGwO_UgTS7I&#34;</span>
+</span></span><span class=line><span class=cl><span class=n>save_dir</span><span class=o>=</span><span class=s2>&#34;docs/youtube/&#34;</span>
+</span></span><span class=line><span class=cl><span class=n>loader</span> <span class=o>=</span> <span class=n>GenericLoader</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>YoutubeAudioLoader</span><span class=p>([</span><span class=n>url</span><span class=p>],</span><span class=n>save_dir</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>    <span class=n>OpenAIWhisperParser</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>docs</span> <span class=o>=</span> <span class=n>loader</span><span class=o>.</span><span class=n>load</span><span class=p>()</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=步骤3查看加载完成的视频文稿>步骤3：查看加载完成的视频文稿</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>docs</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span><span class=o>.</span><span class=n>page_content</span><span class=p>[</span><span class=mi>0</span><span class=p>:</span><span class=mi>500</span><span class=p>]</span>
+</span></span></code></pre></td></tr></table></div></div><h2 id=加载网络url>加载网络URL</h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>from</span> <span class=nn>langchain.document_loaders</span> <span class=kn>import</span> <span class=n>WebBaseLoader</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>loader</span> <span class=o>=</span> <span class=n>WebBaseLoader</span><span class=p>(</span><span class=s2>&#34;https://github.com/basecamp/handbook/blob/master/37signals-is-you.md&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>docs</span> <span class=o>=</span> <span class=n>loader</span><span class=o>.</span><span class=n>load</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nb>print</span><span class=p>(</span><span class=n>docs</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span><span class=o>.</span><span class=n>page_content</span><span class=p>[:</span><span class=mi>500</span><span class=p>])</span>
+</span></span></code></pre></td></tr></table></div></div><h2 id=文档分割>文档分割</h2><p>在上一节中，我们将不同格式和来源的数据加载到了标准的文档对象中。但是，这些文档经过转换后依然很大，而我们通常只需要检索文档中与主题最相关的内容，可能只是几个段落或句子，而不需要整个文档。</p><p>因此，在这一节中，我们将使用LangChain的文本分割器，把大型的文档分割成更小的块。</p><h2 id=文档分割的重要性>文档分割的重要性</h2><p><strong>文档分割发生在数据加载之后，放入向量存储之前</strong>。</p><p><img src=/p/iii-%E5%9F%BA%E4%BA%8E%E7%A7%81%E6%9C%89%E6%95%B0%E6%8D%AE%E4%BD%BF%E7%94%A8langchain%E6%9E%84%E5%BB%BA%E8%81%8A%E5%A4%A9%E6%9C%BA%E5%99%A8%E4%BA%BA/iShot_2023-08-30_22.15.14.png width=1508 height=1692 srcset="/p/iii-%E5%9F%BA%E4%BA%8E%E7%A7%81%E6%9C%89%E6%95%B0%E6%8D%AE%E4%BD%BF%E7%94%A8langchain%E6%9E%84%E5%BB%BA%E8%81%8A%E5%A4%A9%E6%9C%BA%E5%99%A8%E4%BA%BA/iShot_2023-08-30_22.15.14_hu0c250fd91cced91b49ea0be419f1ff00_1161398_480x0_resize_box_3.png 480w, /p/iii-%E5%9F%BA%E4%BA%8E%E7%A7%81%E6%9C%89%E6%95%B0%E6%8D%AE%E4%BD%BF%E7%94%A8langchain%E6%9E%84%E5%BB%BA%E8%81%8A%E5%A4%A9%E6%9C%BA%E5%99%A8%E4%BA%BA/iShot_2023-08-30_22.15.14_hu0c250fd91cced91b49ea0be419f1ff00_1161398_1024x0_resize_box_3.png 1024w" loading=lazy class=gallery-image data-flex-grow=89 data-flex-basis=213px></p><p>如果简单地按字符长度来分割文档，可能会造成句子的断裂，导致语义的丢失或混乱。这样的分割方式，无法为我们正确地回答问题。</p><p>合理的做法，是尽量保持语义的连贯性和完整性，分隔出有意义的块。</p><h2 id=文档分割的方式>文档分割的方式</h2><p>在LangChain中，所有的文本分割器都遵循同一个原理，就是根据「块大小(chunk_size)」和「两个块之间的重叠大小(chunk_overlap)」进行分割。</p><p><img src=/p/iii-%E5%9F%BA%E4%BA%8E%E7%A7%81%E6%9C%89%E6%95%B0%E6%8D%AE%E4%BD%BF%E7%94%A8langchain%E6%9E%84%E5%BB%BA%E8%81%8A%E5%A4%A9%E6%9C%BA%E5%99%A8%E4%BA%BA/iShot_2023-08-30_22.17.41.png width=1612 height=1696 srcset="/p/iii-%E5%9F%BA%E4%BA%8E%E7%A7%81%E6%9C%89%E6%95%B0%E6%8D%AE%E4%BD%BF%E7%94%A8langchain%E6%9E%84%E5%BB%BA%E8%81%8A%E5%A4%A9%E6%9C%BA%E5%99%A8%E4%BA%BA/iShot_2023-08-30_22.17.41_hu67bc95fe5e6d5e1ab5693fdde72bd774_868866_480x0_resize_box_3.png 480w, /p/iii-%E5%9F%BA%E4%BA%8E%E7%A7%81%E6%9C%89%E6%95%B0%E6%8D%AE%E4%BD%BF%E7%94%A8langchain%E6%9E%84%E5%BB%BA%E8%81%8A%E5%A4%A9%E6%9C%BA%E5%99%A8%E4%BA%BA/iShot_2023-08-30_22.17.41_hu67bc95fe5e6d5e1ab5693fdde72bd774_868866_1024x0_resize_box_3.png 1024w" loading=lazy class=gallery-image data-flex-grow=95 data-flex-basis=228px></p><p><code>chunk_size</code>指的是每个块包含的字符或Token（如单词、句子等）的数量。</p><p><code>chunk_overlap</code>指的是两个块之间共享的字符或Token的数量。chunk_overlap可以帮助保持上下文的连贯性，避免因为分割而丢失重要的信息。</p><p>LangChain提供了多种类型的分割器，主要差别在于如何确定块的边界、块由哪些字符或Token组成、以及如何测量块的大小（按字符还是按Token）。</p><p><img src=/p/iii-%E5%9F%BA%E4%BA%8E%E7%A7%81%E6%9C%89%E6%95%B0%E6%8D%AE%E4%BD%BF%E7%94%A8langchain%E6%9E%84%E5%BB%BA%E8%81%8A%E5%A4%A9%E6%9C%BA%E5%99%A8%E4%BA%BA/iShot_2023-08-30_22.19.02.png width=1360 height=1292 srcset="/p/iii-%E5%9F%BA%E4%BA%8E%E7%A7%81%E6%9C%89%E6%95%B0%E6%8D%AE%E4%BD%BF%E7%94%A8langchain%E6%9E%84%E5%BB%BA%E8%81%8A%E5%A4%A9%E6%9C%BA%E5%99%A8%E4%BA%BA/iShot_2023-08-30_22.19.02_hu9a6fdaf0aca0515884a89ff0a75a7896_763219_480x0_resize_box_3.png 480w, /p/iii-%E5%9F%BA%E4%BA%8E%E7%A7%81%E6%9C%89%E6%95%B0%E6%8D%AE%E4%BD%BF%E7%94%A8langchain%E6%9E%84%E5%BB%BA%E8%81%8A%E5%A4%A9%E6%9C%BA%E5%99%A8%E4%BA%BA/iShot_2023-08-30_22.19.02_hu9a6fdaf0aca0515884a89ff0a75a7896_763219_1024x0_resize_box_3.png 1024w" loading=lazy class=gallery-image data-flex-grow=105 data-flex-basis=252px></p><p>元数据（Metadata）是块分割的另一个重要部分，我们需要在所有块中保持元数据的一致性，同时在需要的时候添加新的元数据。</p><h2 id=基于字符的分割>基于字符的分割</h2><p>如何分割块通常取决于我们正在处理的文档类型。</p><p>比如，处理代码的分割器拥有许多不同编程语言的分隔符，如Python、Ruby、C等。当分割代码文档时，它会考虑到不同编程语言之间的差异。</p><h3 id=步骤1导入文本分割器>步骤1：导入文本分割器</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=c1># RecursiveCharacterTextSplitter-递归字符文本分割器</span>
+</span></span><span class=line><span class=cl><span class=c1># CharacterTextSplitter-字符文本分割器</span>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>langchain.text_splitter</span> <span class=kn>import</span> <span class=n>RecursiveCharacterTextSplitter</span><span class=p>,</span> <span class=n>CharacterTextSplitter</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=步骤2设定块大小和块重叠大小>步骤2：设定块大小和块重叠大小</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>chunk_size</span> <span class=o>=</span><span class=mi>26</span>
+</span></span><span class=line><span class=cl><span class=n>chunk_overlap</span> <span class=o>=</span> <span class=mi>4</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=步骤3初始化文本分割器>步骤3：初始化文本分割器</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>r_splitter</span> <span class=o>=</span> <span class=n>RecursiveCharacterTextSplitter</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>chunk_size</span><span class=o>=</span><span class=n>chunk_size</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>chunk_overlap</span><span class=o>=</span><span class=n>chunk_overlap</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>c_splitter</span> <span class=o>=</span> <span class=n>CharacterTextSplitter</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>chunk_size</span><span class=o>=</span><span class=n>chunk_size</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>chunk_overlap</span><span class=o>=</span><span class=n>chunk_overlap</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=步骤4使用不同的分割器对字符串进行分割>步骤4：使用不同的分割器对字符串进行分割</h3><h4 id=递归字符文本分割器>递归字符文本分割器</h4><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>text2</span> <span class=o>=</span> <span class=s1>&#39;abcdefghijklmnopqrstuvwxyzabcdefg&#39;</span>
+</span></span><span class=line><span class=cl><span class=n>r_splitter</span><span class=o>.</span><span class=n>split_text</span><span class=p>(</span><span class=n>text2</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=c1># [&#39;abcdefghijklmnopqrstuvwxyz&#39;, &#39;wxyzabcdefg&#39;]</span>
+</span></span></code></pre></td></tr></table></div></div><p>可以看到，第二个块是从「wxyz」开始的，刚好是我们设定的块重叠大小。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>text3</span> <span class=o>=</span> <span class=s2>&#34;a b c d e f g h i j k l m n o p q r s t u v w x y z&#34;</span>
+</span></span><span class=line><span class=cl><span class=n>r_splitter</span><span class=o>.</span><span class=n>split_text</span><span class=p>(</span><span class=n>text3</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=c1># [&#39;a b c d e f g h i j k l m&#39;, &#39;l m n o p q r s t u v w x&#39;, &#39;w x y z&#39;]</span>
+</span></span></code></pre></td></tr></table></div></div><h4 id=字符文本分割器>字符文本分割器</h4><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>c_splitter</span><span class=o>.</span><span class=n>split_text</span><span class=p>(</span><span class=n>text3</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=c1># [&#39;a b c d e f g h i j k l m n o p q r s t u v w x y z&#39;]</span>
+</span></span></code></pre></td></tr></table></div></div><p>可以看到，字符文本分割器实际并没有分割这个字符串，这是因为字符文本分割器默认是以换行符为分隔符的，为此，我们需要将分隔符设置为空格。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>c_splitter</span> <span class=o>=</span> <span class=n>CharacterTextSplitter</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>chunk_size</span><span class=o>=</span><span class=n>chunk_size</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>chunk_overlap</span><span class=o>=</span><span class=n>chunk_overlap</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>separator</span> <span class=o>=</span> <span class=s1>&#39; &#39;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>c_splitter</span><span class=o>.</span><span class=n>split_text</span><span class=p>(</span><span class=n>text3</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=c1># [&#39;a b c d e f g h i j k l m&#39;, &#39;l m n o p q r s t u v w x&#39;, &#39;w x y z&#39;]</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=步骤5递归分割长段落>步骤5：递归分割长段落</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>some_text</span> <span class=o>=</span> <span class=s2>&#34;&#34;&#34;When writing documents, writers will use document structure to group content. </span><span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span><span class=s2>This can convey to the reader, which idea&#39;s are related. For example, closely related ideas </span><span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span><span class=s2>are in sentances. Similar ideas are in paragraphs. Paragraphs form a document. </span><span class=se>\n\n</span><span class=s2>  </span><span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span><span class=s2>Paragraphs are often delimited with a carriage return or two carriage returns. </span><span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span><span class=s2>Carriage returns are the &#34;backslash n&#34; you see embedded in this string. </span><span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span><span class=s2>Sentences have a period at the end, but also, have a space.</span><span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span><span class=s2>and words are separated by space.&#34;&#34;&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>r_splitter</span> <span class=o>=</span> <span class=n>RecursiveCharacterTextSplitter</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>chunk_size</span><span class=o>=</span><span class=mi>150</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>chunk_overlap</span><span class=o>=</span><span class=mi>0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>separators</span><span class=o>=</span><span class=p>[</span><span class=s2>&#34;</span><span class=se>\n\n</span><span class=s2>&#34;</span><span class=p>,</span> <span class=s2>&#34;</span><span class=se>\n</span><span class=s2>&#34;</span><span class=p>,</span> <span class=s2>&#34; &#34;</span><span class=p>,</span> <span class=s2>&#34;&#34;</span><span class=p>]</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>r_splitter</span><span class=o>.</span><span class=n>split_text</span><span class=p>(</span><span class=n>some_text</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>这里，我们传入一个分隔符列表，依次为双换行符、单换行符、空格和一个空字符。</p><p>这就意味着，当你分割一段文本时，它会首先采用双换行符来尝试初步分割，并视情况依次使用其他的分隔符来进一步分割。</p><p>最终分割结果如下：</p><blockquote><p>[&ldquo;When writing documents, writers will use document structure to group content. This can convey to the reader, which idea&rsquo;s are related. For example, closely related ideas are in sentances. Similar ideas are in paragraphs. Paragraphs form a document.&rdquo;,</p><p>&lsquo;Paragraphs are often delimited with a carriage return or two carriage returns. Carriage returns are the &ldquo;backslash n&rdquo; you see embedded in this string. Sentences have a period at the end, but also, have a space.and words are separated by space.&rsquo;]</p></blockquote><p>如果需要按照句子进行分隔，则还要用正则表达式添加一个句号分隔符：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>r_splitter</span> <span class=o>=</span> <span class=n>RecursiveCharacterTextSplitter</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>chunk_size</span><span class=o>=</span><span class=mi>150</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>chunk_overlap</span><span class=o>=</span><span class=mi>0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>separators</span><span class=o>=</span><span class=p>[</span><span class=s2>&#34;</span><span class=se>\n\n</span><span class=s2>&#34;</span><span class=p>,</span> <span class=s2>&#34;</span><span class=se>\n</span><span class=s2>&#34;</span><span class=p>,</span> <span class=s2>&#34;(?&lt;=\. )&#34;</span><span class=p>,</span> <span class=s2>&#34; &#34;</span><span class=p>,</span> <span class=s2>&#34;&#34;</span><span class=p>]</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>r_splitter</span><span class=o>.</span><span class=n>split_text</span><span class=p>(</span><span class=n>some_text</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><blockquote><p>[&ldquo;When writing documents, writers will use document structure to group content. This can convey to the reader, which idea&rsquo;s are related.&rdquo;,</p><p>&lsquo;For example, closely related ideas are in sentances. Similar ideas are in paragraphs. Paragraphs form a document.&rsquo;,</p><p>&lsquo;Paragraphs are often delimited with a carriage return or two carriage returns.&rsquo;,</p><p>&lsquo;Carriage returns are the &ldquo;backslash n&rdquo; you see embedded in this string.&rsquo;,</p><p>&lsquo;Sentences have a period at the end, but also, have a space.and words are separated by space.&rsquo;]</p></blockquote><p>这就是递归字符文本分割器名字中“递归”的含义，总的来说，我们更建议在通用文本中使用递归字符文本分割器。</p><h2 id=基于token的分割>基于Token的分割</h2><p>很多LLM的上下文窗口长度限制是按照Token来计数的。因此，以LLM的视角，按照Token对文本进行分隔，通常可以得到更好的结果。</p><p>为了理解基于字符分割和基于Token分割的区别，我们可以用一个简单的例子来说明。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>from</span> <span class=nn>langchain.text_splitter</span> <span class=kn>import</span> <span class=n>TokenTextSplitter</span>
+</span></span><span class=line><span class=cl><span class=n>text_splitter</span> <span class=o>=</span> <span class=n>TokenTextSplitter</span><span class=p>(</span><span class=n>chunk_size</span><span class=o>=</span><span class=mi>1</span><span class=p>,</span> <span class=n>chunk_overlap</span><span class=o>=</span><span class=mi>0</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>text1</span> <span class=o>=</span> <span class=s2>&#34;foo bar bazzyfoo&#34;</span>
+</span></span><span class=line><span class=cl><span class=n>text_splitter</span><span class=o>.</span><span class=n>split_text</span><span class=p>(</span><span class=n>text1</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>这里，我们创建了一个Token文本分割器，将块大小设为1，块重叠大小设为0，相当于将任意字符串分割成了单个Token组成的列表，每个Token的内容如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=p>[</span><span class=s1>&#39;foo&#39;</span><span class=p>,</span> <span class=s1>&#39; bar&#39;</span><span class=p>,</span> <span class=s1>&#39; b&#39;</span><span class=p>,</span> <span class=s1>&#39;az&#39;</span><span class=p>,</span> <span class=s1>&#39;zy&#39;</span><span class=p>,</span> <span class=s1>&#39;foo&#39;</span><span class=p>]</span>
+</span></span></code></pre></td></tr></table></div></div><p>因此，Token的长度和字符长度是不一样的，Token通常为4个字符。</p><h2 id=分割markdown文档>分割Markdown文档</h2><p><strong>分块的目的旨在将具有共同上下文的文本放在一起</strong>。</p><p>通常，我们可以通过使用指定分隔符来进行分隔，但有些类型的文档（例如 Markdown）本身就具有可用于分割的结构（如标题）。</p><p>Markdown标题文本分割器会根据标题或子标题来分割一个Markdown文档，并将标题作为元数据添加到每个块中。</p><h3 id=步骤1定义一个markdown文档>步骤1：定义一个Markdown文档</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>from</span> <span class=nn>langchain.document_loaders</span> <span class=kn>import</span> <span class=n>NotionDirectoryLoader</span>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>langchain.text_splitter</span> <span class=kn>import</span> <span class=n>MarkdownHeaderTextSplitter</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>markdown_document</span> <span class=o>=</span> <span class=s2>&#34;&#34;&#34;# Title</span><span class=se>\n\n</span><span class=s2> </span><span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span><span class=s2>## Chapter 1</span><span class=se>\n\n</span><span class=s2> </span><span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span><span class=s2>Hi this is Jim</span><span class=se>\n\n</span><span class=s2> Hi this is Joe</span><span class=se>\n\n</span><span class=s2> </span><span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span><span class=s2>### Section </span><span class=se>\n\n</span><span class=s2> </span><span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span><span class=s2>Hi this is Lance </span><span class=se>\n\n</span><span class=s2> 
+</span></span></span><span class=line><span class=cl><span class=s2>## Chapter 2</span><span class=se>\n\n</span><span class=s2> </span><span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span><span class=s2>Hi this is Molly&#34;&#34;&#34;</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=步骤2定义想要分割的标题列表和名称>步骤2：定义想要分割的标题列表和名称</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>headers_to_split_on</span> <span class=o>=</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>    <span class=p>(</span><span class=s2>&#34;#&#34;</span><span class=p>,</span> <span class=s2>&#34;Header 1&#34;</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>    <span class=p>(</span><span class=s2>&#34;##&#34;</span><span class=p>,</span> <span class=s2>&#34;Header 2&#34;</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>    <span class=p>(</span><span class=s2>&#34;###&#34;</span><span class=p>,</span> <span class=s2>&#34;Header 3&#34;</span><span class=p>),</span>
+</span></span><span class=line><span class=cl><span class=p>]</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=步骤3初始化markdown标题文本切分器分割markdown文档>步骤3：初始化Markdown标题文本切分器，分割Markdown文档</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>markdown_splitter</span> <span class=o>=</span> <span class=n>MarkdownHeaderTextSplitter</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>headers_to_split_on</span><span class=o>=</span><span class=n>headers_to_split_on</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>md_header_splits</span> <span class=o>=</span> <span class=n>markdown_splitter</span><span class=o>.</span><span class=n>split_text</span><span class=p>(</span><span class=n>markdown_document</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>md_header_splits</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span>
+</span></span><span class=line><span class=cl><span class=c1># Document(page_content=&#39;Hi this is Jim  \nHi this is Joe&#39;, metadata={&#39;Header 1&#39;: &#39;Title&#39;, &#39;Header 2&#39;: &#39;Chapter 1&#39;})</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>md_header_splits</span><span class=p>[</span><span class=mi>1</span><span class=p>]</span>
+</span></span><span class=line><span class=cl><span class=c1># Document(page_content=&#39;Hi this is Lance&#39;, metadata={&#39;Header 1&#39;: &#39;Title&#39;, &#39;Header 2&#39;: &#39;Chapter 1&#39;, &#39;Header 3&#39;: &#39;Section&#39;})</span>
+</span></span></code></pre></td></tr></table></div></div><p>可以看到，每个块都包含了页面内容和元数据，元数据中记录了该块所属的标题和子标题。</p><p>我们已经了解了如何将长文档分割为语义相关的块，并且包含正确的元数据。接下来要做的就是将这些块放入到一个索引中，这样当我们要回答某个数据集相关的问题时，就能轻松地检索到对应的块。</p><p>要实现这一目标，我们需要用到两个技术：嵌入(Embedding)和向量存储(Vector Store) 。</p><h2 id=向量存储和嵌入>向量存储和嵌入</h2><p>嵌入是将一段文本转化为数值形式。<strong>具有相似内容的文本在数值空间中会有相似的向量</strong>，这就意味着我们可以通过比较这些向量，来找出相似的文本片段。</p><p>而向量存储是一种数据库，它用来存储分割后的文档片段以及它们对应的嵌入，方便我们后续根据问题查找相关的文档。</p><p>整个过程如下：</p><ol><li>提出一个问题，并为它生成一个嵌入；</li><li>将它跟向量存储里的所有不同的向量进行比较；</li><li>选出最相似的前n个片段；</li><li>将选出的片段和问题一起输入到LLM里，得到一个答案。</li></ol><p>为了帮助理解，我们先看一个简单的例子：</p><h3 id=步骤1提供一些例句其中前两句非常相似第三句则与前两句关联不大>步骤1：提供一些例句，其中前两句非常相似，第三句则与前两句关联不大</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>sentence1</span> <span class=o>=</span> <span class=s2>&#34;i like dogs&#34;</span>
+</span></span><span class=line><span class=cl><span class=n>sentence2</span> <span class=o>=</span> <span class=s2>&#34;i like canines&#34;</span>
+</span></span><span class=line><span class=cl><span class=n>sentence3</span> <span class=o>=</span> <span class=s2>&#34;the weather is ugly outside&#34;</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=步骤2使用embbeding类为每个句子生成一个嵌入>步骤2：使用Embbeding类为每个句子生成一个嵌入</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>from</span> <span class=nn>langchain.embeddings.openai</span> <span class=kn>import</span> <span class=n>OpenAIEmbeddings</span>
+</span></span><span class=line><span class=cl><span class=n>embedding</span> <span class=o>=</span> <span class=n>OpenAIEmbeddings</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>embedding1</span> <span class=o>=</span> <span class=n>embedding</span><span class=o>.</span><span class=n>embed_query</span><span class=p>(</span><span class=n>sentence1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>embedding2</span> <span class=o>=</span> <span class=n>embedding</span><span class=o>.</span><span class=n>embed_query</span><span class=p>(</span><span class=n>sentence2</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>embedding3</span> <span class=o>=</span> <span class=n>embedding</span><span class=o>.</span><span class=n>embed_query</span><span class=p>(</span><span class=n>sentence3</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=步骤3用点积dot-product来计算两两之间的嵌入相似度>步骤3：用点积(dot product)来计算两两之间的嵌入相似度</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>import</span> <span class=nn>numpy</span> <span class=k>as</span> <span class=nn>np</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>np</span><span class=o>.</span><span class=n>dot</span><span class=p>(</span><span class=n>embedding1</span><span class=p>,</span> <span class=n>embedding2</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=c1># 0.9631853877103518</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>np</span><span class=o>.</span><span class=n>dot</span><span class=p>(</span><span class=n>embedding1</span><span class=p>,</span> <span class=n>embedding3</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=c1># 0.7709997651294672</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>np</span><span class=o>.</span><span class=n>dot</span><span class=p>(</span><span class=n>embedding2</span><span class=p>,</span> <span class=n>embedding3</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=c1># 0.7596334120325523</span>
+</span></span></code></pre></td></tr></table></div></div><p>点积的值越大，代表相似度就越高。</p><p>再来看一个实际的例子：</p><p>目标是为提供的所有PDF文档生成嵌入，并把它们存储在一个向量存储里。</p><h3 id=步骤1加载pdf文档>步骤1：加载PDF文档</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>from</span> <span class=nn>langchain.document_loaders</span> <span class=kn>import</span> <span class=n>PyPDFLoader</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 加载 PDF</span>
+</span></span><span class=line><span class=cl><span class=n>loaders</span> <span class=o>=</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>    <span class=c1># 重复加载第一个文档，模拟一些脏数据</span>
+</span></span><span class=line><span class=cl>    <span class=n>PyPDFLoader</span><span class=p>(</span><span class=s2>&#34;docs/cs229_lectures/MachineLearning-Lecture01.pdf&#34;</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>    <span class=n>PyPDFLoader</span><span class=p>(</span><span class=s2>&#34;docs/cs229_lectures/MachineLearning-Lecture01.pdf&#34;</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>    <span class=n>PyPDFLoader</span><span class=p>(</span><span class=s2>&#34;docs/cs229_lectures/MachineLearning-Lecture02.pdf&#34;</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>    <span class=n>PyPDFLoader</span><span class=p>(</span><span class=s2>&#34;docs/cs229_lectures/MachineLearning-Lecture03.pdf&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>]</span>
+</span></span><span class=line><span class=cl><span class=n>docs</span> <span class=o>=</span> <span class=p>[]</span>
+</span></span><span class=line><span class=cl><span class=k>for</span> <span class=n>loader</span> <span class=ow>in</span> <span class=n>loaders</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=n>docs</span><span class=o>.</span><span class=n>extend</span><span class=p>(</span><span class=n>loader</span><span class=o>.</span><span class=n>load</span><span class=p>())</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=步骤2用递归字符文本分割器来把文档分成块>步骤2：用递归字符文本分割器来把文档分成块</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=c1># 分割</span>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>langchain.text_splitter</span> <span class=kn>import</span> <span class=n>RecursiveCharacterTextSplitter</span>
+</span></span><span class=line><span class=cl><span class=n>text_splitter</span> <span class=o>=</span> <span class=n>RecursiveCharacterTextSplitter</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>chunk_size</span> <span class=o>=</span> <span class=mi>1500</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>chunk_overlap</span> <span class=o>=</span> <span class=mi>150</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>splits</span> <span class=o>=</span> <span class=n>text_splitter</span><span class=o>.</span><span class=n>split_documents</span><span class=p>(</span><span class=n>docs</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=步骤3为每个块生成嵌入并创建chroma向量存储>步骤3：为每个块生成嵌入，并创建Chroma向量存储</h3><p>这里用到的向量存储是Chroma。Chroma是一种轻量级、基于内存的向量存储，使用起来很方便。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>from</span> <span class=nn>langchain.vectorstores</span> <span class=kn>import</span> <span class=n>Chroma</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 可先用[rm -rf ./docs/chroma]移除可能存在的旧数据库数据</span>
+</span></span><span class=line><span class=cl><span class=n>persist_directory</span> <span class=o>=</span> <span class=s1>&#39;docs/chroma/&#39;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 传入之前创建的分割和嵌入，以及持久化目录</span>
+</span></span><span class=line><span class=cl><span class=n>vectordb</span> <span class=o>=</span> <span class=n>Chroma</span><span class=o>.</span><span class=n>from_documents</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>documents</span><span class=o>=</span><span class=n>splits</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>embedding</span><span class=o>=</span><span class=n>embedding</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>persist_directory</span><span class=o>=</span><span class=n>persist_directory</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=步骤4用相似性搜索方法来查找文档>步骤4：用相似性搜索方法来查找文档</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>question</span> <span class=o>=</span> <span class=s2>&#34;is there an email i can ask for help&#34;</span>
+</span></span><span class=line><span class=cl><span class=c1># K=3用于指定返回的文档数量</span>
+</span></span><span class=line><span class=cl><span class=n>docs</span> <span class=o>=</span> <span class=n>vectordb</span><span class=o>.</span><span class=n>similarity_search</span><span class=p>(</span><span class=n>question</span><span class=p>,</span><span class=n>k</span><span class=o>=</span><span class=mi>3</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>可以打印文档的长度和内容来检查：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=nb>len</span><span class=p>(</span><span class=n>docs</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=c1># 3</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>docs</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span><span class=o>.</span><span class=n>page_content</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=步骤5持久化向量数据库以便以后使用>步骤5：持久化向量数据库，以便以后使用</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>vectordb</span><span class=o>.</span><span class=n>persist</span><span class=p>()</span>
+</span></span></code></pre></td></tr></table></div></div><p>接下来我们将讨论一些边缘案例，展示几种可能出现失败情况：</p><h3 id=失败情况1重复的块导致重复的冗余信息>失败情况1：重复的块导致重复的冗余信息</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>question</span> <span class=o>=</span> <span class=s2>&#34;what did they say about matlab?&#34;</span>
+</span></span><span class=line><span class=cl><span class=n>docs</span> <span class=o>=</span> <span class=n>vectordb</span><span class=o>.</span><span class=n>similarity_search</span><span class=p>(</span><span class=n>question</span><span class=p>,</span><span class=n>k</span><span class=o>=</span><span class=mi>5</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>docs</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span>
+</span></span><span class=line><span class=cl><span class=n>docs</span><span class=p>[</span><span class=mi>1</span><span class=p>]</span>
+</span></span></code></pre></td></tr></table></div></div><p>其中，docs[0] 和 docs[1] 得到的结果是相同的，这是因为我们在一开始就有意重复加载了第一个文档。</p><p>这样做的结果是，我们把两个内容相同的分块都传给了语言模型。而第二个分块是没有价值的，如果换成一个内容不同的分块会更好，这样至少语言模型可以从中获取更多信息。</p><p>在下一课中，我们将讨论如何在保证检索到相关的块的同时，也能保证每个块都是唯一的。</p><h3 id=失败情况2无法完整捕捉到问题中的关键信息>失败情况2：无法完整捕捉到问题中的关键信息</h3><p>比如下面这个问题，“第三堂课里他们讲了什么关于回归的内容？”</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>question</span> <span class=o>=</span> <span class=s2>&#34;what did they say about regression in the third lecture?&#34;</span>
+</span></span><span class=line><span class=cl><span class=n>docs</span> <span class=o>=</span> <span class=n>vectordb</span><span class=o>.</span><span class=n>similarity_search</span><span class=p>(</span><span class=n>question</span><span class=p>,</span><span class=n>k</span><span class=o>=</span><span class=mi>5</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>一般来说，我们应该能看出，问题的提问者是想要从第三堂课里找到答案的。</p><p>但实际上，当我们遍历所有文档，并打印出元数据后会发现，结果里实际上混合了多个文档的内容。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>for</span> <span class=n>doc</span> <span class=ow>in</span> <span class=n>docs</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=nb>print</span><span class=p>(</span><span class=n>doc</span><span class=o>.</span><span class=n>metadata</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    
+</span></span><span class=line><span class=cl><span class=c1># {&#39;source&#39;: &#39;docs/cs229_lectures/MachineLearning-Lecture03.pdf&#39;, &#39;page&#39;: 0}</span>
+</span></span><span class=line><span class=cl><span class=c1># {&#39;source&#39;: &#39;docs/cs229_lectures/MachineLearning-Lecture03.pdf&#39;, &#39;page&#39;: 14}</span>
+</span></span><span class=line><span class=cl><span class=c1># {&#39;source&#39;: &#39;docs/cs229_lectures/MachineLearning-Lecture02.pdf&#39;, &#39;page&#39;: 0}</span>
+</span></span><span class=line><span class=cl><span class=c1># {&#39;source&#39;: &#39;docs/cs229_lectures/MachineLearning-Lecture03.pdf&#39;, &#39;page&#39;: 6}</span>
+</span></span><span class=line><span class=cl><span class=c1># {&#39;source&#39;: &#39;docs/cs229_lectures/MachineLearning-Lecture01.pdf&#39;, &#39;page&#39;: 8}</span>
+</span></span></code></pre></td></tr></table></div></div><p>这是因为，我们只是基于嵌入做了一个语义搜索，它为整个句子生成了一个嵌入，并且可能会更关注于“回归”这个词。</p><p>当我们查看第五个文档时，就会发现它确实提到了“回归”这个词。</p><h3 id=失败情况3随着检索文档数量的增加相关性逐渐降低>失败情况3：随着检索文档数量的增加，相关性逐渐降低</h3><p>当我们尝试改变k值，也就是检索的文档数量时，我们会得到更多的文档，但结果列表后面的文档可能没有前面的那些相关性强。</p><h2 id=检索>检索</h2><p>在这一课中，我们将深入探讨「检索」技术，并介绍一些更先进的方法来克服上一课的边缘情况。</p><p><strong>检索是检索增强生成（RAG）流程的核心</strong>。</p><h2 id=解决多样性最大边缘相关性>解决多样性：最大边缘相关性</h2><p>最大边缘相关性(MMR, Maximum Marginal Relevance)背后的理念是，<strong>如果我们总是选择与查询在嵌入空间中最相似的文档，我们可能会错过一些多元化的信息</strong>。</p><p>MMR可以帮助我们选择一个更多样化的文档集合。</p><p><strong>MMR在保持查询相关性的同时，尽量增加结果之间的多样性</strong>，它的做法是：</p><ol><li>首先发送一个查询，得到一组回答；</li><li>用"fetch_k"参数指定我们想要获取的响应数量，这完全基于语义相似性；</li><li>然后，针对这个较小的文档集合，从多样性方面进行优化；</li><li>最后从这组文档中，选择"k"个响应返回给用户。</li></ol><p>我们用一个简单的例子来帮助理解：</p><p>目标是查询有指定特征的蘑菇信息。</p><h3 id=步骤1创建chroma向量存储>步骤1：创建Chroma向量存储</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>from</span> <span class=nn>langchain.vectorstores</span> <span class=kn>import</span> <span class=n>Chroma</span>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>langchain.embeddings.openai</span> <span class=kn>import</span> <span class=n>OpenAIEmbeddings</span>
+</span></span><span class=line><span class=cl><span class=n>persist_directory</span> <span class=o>=</span> <span class=s1>&#39;docs/chroma/&#39;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>embedding</span> <span class=o>=</span> <span class=n>OpenAIEmbeddings</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=n>vectordb</span> <span class=o>=</span> <span class=n>Chroma</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>persist_directory</span><span class=o>=</span><span class=n>persist_directory</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>embedding_function</span><span class=o>=</span><span class=n>embedding</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=步骤2用少量信息创建一个小型数据库>步骤2：用少量信息创建一个小型数据库</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=c1># 鹅膏菌有一个巨大而雄伟的子实体(地上部分)。</span>
+</span></span><span class=line><span class=cl><span class=c1># 有大子实体的蘑菇是鹅膏菌。有些品种是全白色的。</span>
+</span></span><span class=line><span class=cl><span class=c1># 鹅膏菌，又叫死亡帽，是所有已知蘑菇中毒性最强的一种。</span>
+</span></span><span class=line><span class=cl><span class=n>texts</span> <span class=o>=</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;&#34;&#34;The Amanita phalloides has a large and imposing epigeous (aboveground) fruiting body (basidiocarp).&#34;&#34;&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;&#34;&#34;A mushroom with a large fruiting body is the Amanita phalloides. Some varieties are all-white.&#34;&#34;&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;&#34;&#34;A. phalloides, a.k.a Death Cap, is one of the most poisonous of all known mushrooms.&#34;&#34;&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl><span class=p>]</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>smalldb</span> <span class=o>=</span> <span class=n>Chroma</span><span class=o>.</span><span class=n>from_texts</span><span class=p>(</span><span class=n>texts</span><span class=p>,</span> <span class=n>embedding</span><span class=o>=</span><span class=n>embedding</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=步骤3进行相似性搜索>步骤3：进行相似性搜索</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=c1># 告诉我有关带有大子实体的全白蘑菇的信息</span>
+</span></span><span class=line><span class=cl><span class=n>question</span> <span class=o>=</span> <span class=s2>&#34;Tell me about all-white mushrooms with large fruiting bodies&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>smalldb</span><span class=o>.</span><span class=n>similarity_search</span><span class=p>(</span><span class=n>question</span><span class=p>,</span> <span class=n>k</span><span class=o>=</span><span class=mi>2</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=c1># [Document(page_content=&#39;A mushroom with a large fruiting body is the Amanita phalloides. Some varieties are all-white.&#39;, metadata={}),</span>
+</span></span><span class=line><span class=cl><span class=c1># Document(page_content=&#39;The Amanita phalloides has a large and imposing epigeous (aboveground) fruiting body (basidiocarp).&#39;, metadata={})]</span>
+</span></span></code></pre></td></tr></table></div></div><p>可以看到，它根据k值返回了两个最相关的文档，但没有提到它们有毒的事实。</p><h3 id=步骤4进行mmr搜索>步骤4：进行MMR搜索</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>smalldb</span><span class=o>.</span><span class=n>max_marginal_relevance_search</span><span class=p>(</span><span class=n>question</span><span class=p>,</span><span class=n>k</span><span class=o>=</span><span class=mi>2</span><span class=p>,</span> <span class=n>fetch_k</span><span class=o>=</span><span class=mi>3</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=c1># [Document(page_content=&#39;A mushroom with a large fruiting body is the Amanita phalloides. Some varieties are all-white.&#39;, metadata={}),</span>
+</span></span><span class=line><span class=cl><span class=c1># Document(page_content=&#39;A. phalloides, a.k.a Death Cap, is one of the most poisonous of all known mushrooms.&#39;, metadata={})]</span>
+</span></span></code></pre></td></tr></table></div></div><p>这里我们传入了"k=2"，表示仍然想返回两个文档，但我们设置了"fetch_k=3"，表示想获取三个文档。然后我们就可以看到，返回的文档中包含了它们有毒的事实。</p><p>现在我们试着用这个方法来处理上一节课中的失败情况1：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>question</span> <span class=o>=</span> <span class=s2>&#34;what did they say about matlab?&#34;</span>
+</span></span><span class=line><span class=cl><span class=n>docs_mmr</span> <span class=o>=</span> <span class=n>vectordb</span><span class=o>.</span><span class=n>max_marginal_relevance_search</span><span class=p>(</span><span class=n>question</span><span class=p>,</span><span class=n>k</span><span class=o>=</span><span class=mi>3</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>docs_mmr</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span><span class=o>.</span><span class=n>page_content</span><span class=p>[:</span><span class=mi>100</span><span class=p>]</span>
+</span></span><span class=line><span class=cl><span class=c1># &#39;those homeworks will be done in either MATLA B or in Octave, which is sort of — I \nknow some people &#39;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>docs_mmr</span><span class=p>[</span><span class=mi>1</span><span class=p>]</span><span class=o>.</span><span class=n>page_content</span><span class=p>[:</span><span class=mi>100</span><span class=p>]</span>
+</span></span><span class=line><span class=cl><span class=c1># &#39;algorithm then? So what’s different? How come  I was making all that noise earlier about \nleast squa&#39;</span>
+</span></span></code></pre></td></tr></table></div></div><p>可以看到，第一个文档跟之前一样，因为它最相关。而第二个文档这次就不同了，这说明MMR让回答中增加了一些多样性。</p><h2 id=解决特殊性使用自查询检索器处理元数据>解决特殊性：使用自查询检索器处理元数据</h2><p>自查询使用语言模型将原始问题分割为两个独立的部分，一个过滤器和一个搜索项。</p><p>搜索项就是我们在语义上想要查找的问题内容。</p><p>过滤器则是包含我们想要过滤的元数据。</p><p>比如，“1980年制作的关于外星人的电影有哪些”，语义部分就是“关于外星人的电影”，元数据部分则是“电影年份应为1980年”。</p><p>我们先手动指定一个元数据过滤器来验证它的效果。</p><p>目标是处理上一节课的失败情况2：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>question</span> <span class=o>=</span> <span class=s2>&#34;what did they say about regression in the third lecture?&#34;</span>
+</span></span><span class=line><span class=cl><span class=c1># 指定源为第三堂课的PDF文档</span>
+</span></span><span class=line><span class=cl><span class=n>docs</span> <span class=o>=</span> <span class=n>vectordb</span><span class=o>.</span><span class=n>similarity_search</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>question</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>k</span><span class=o>=</span><span class=mi>3</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=nb>filter</span><span class=o>=</span><span class=p>{</span><span class=s2>&#34;source&#34;</span><span class=p>:</span><span class=s2>&#34;docs/cs229_lectures/MachineLearning-Lecture03.pdf&#34;</span><span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>for</span> <span class=n>d</span> <span class=ow>in</span> <span class=n>docs</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=nb>print</span><span class=p>(</span><span class=n>d</span><span class=o>.</span><span class=n>metadata</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=c1># {&#39;source&#39;: &#39;docs/cs229_lectures/MachineLearning-Lecture03.pdf&#39;, &#39;page&#39;: 0}</span>
+</span></span><span class=line><span class=cl><span class=c1># {&#39;source&#39;: &#39;docs/cs229_lectures/MachineLearning-Lecture03.pdf&#39;, &#39;page&#39;: 14}</span>
+</span></span><span class=line><span class=cl><span class=c1># {&#39;source&#39;: &#39;docs/cs229_lectures/MachineLearning-Lecture03.pdf&#39;, &#39;page&#39;: 4} </span>
+</span></span></code></pre></td></tr></table></div></div><p>可以看到，现在检索到的文档都来自那一堂课了。</p><p>我们还可以使用<code>SelfQueryRetriever</code>，从问题本身推断出元数据。</p><h3 id=步骤1提供元数据字段信息>步骤1：提供元数据字段信息</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>from</span> <span class=nn>langchain.llms</span> <span class=kn>import</span> <span class=n>OpenAI</span>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>langchain.retrievers.self_query.base</span> <span class=kn>import</span> <span class=n>SelfQueryRetriever</span>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>langchain.chains.query_constructor.base</span> <span class=kn>import</span> <span class=n>AttributeInfo</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>metadata_field_info</span> <span class=o>=</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>    <span class=n>AttributeInfo</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>        <span class=n>name</span><span class=o>=</span><span class=s2>&#34;source&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=n>description</span><span class=o>=</span><span class=s2>&#34;The lecture the chunk is from, should be one of `docs/cs229_lectures/MachineLearning-Lecture01.pdf`, `docs/cs229_lectures/MachineLearning-Lecture02.pdf`, or `docs/cs229_lectures/MachineLearning-Lecture03.pdf`&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nb>type</span><span class=o>=</span><span class=s2>&#34;string&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=p>),</span>
+</span></span><span class=line><span class=cl>    <span class=n>AttributeInfo</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>        <span class=n>name</span><span class=o>=</span><span class=s2>&#34;page&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=n>description</span><span class=o>=</span><span class=s2>&#34;The page from the lecture&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nb>type</span><span class=o>=</span><span class=s2>&#34;integer&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=p>),</span>
+</span></span><span class=line><span class=cl><span class=p>]</span>
+</span></span></code></pre></td></tr></table></div></div><p>这个例子中的元数据只有两个字段，源（source）和页（page）。我们需要填写每个字段的名称、描述和类型。这些信息会被传给语言模型，所以需要尽可能描述得清楚。</p><h3 id=步骤2初始化自查询检索器>步骤2：初始化自查询检索器</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=c1># 指定文档实际内容的信息</span>
+</span></span><span class=line><span class=cl><span class=n>document_content_description</span> <span class=o>=</span> <span class=s2>&#34;Lecture notes&#34;</span>
+</span></span><span class=line><span class=cl><span class=n>llm</span> <span class=o>=</span> <span class=n>OpenAI</span><span class=p>(</span><span class=n>temperature</span><span class=o>=</span><span class=mi>0</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>retriever</span> <span class=o>=</span> <span class=n>SelfQueryRetriever</span><span class=o>.</span><span class=n>from_llm</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>llm</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>vectordb</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>document_content_description</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>metadata_field_info</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>verbose</span><span class=o>=</span><span class=kc>True</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=步骤3运行自查询检索器搜索问题>步骤3：运行自查询检索器搜索问题</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>question</span> <span class=o>=</span> <span class=s2>&#34;what did they say about regression in the third lecture?&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>docs</span> <span class=o>=</span> <span class=n>retriever</span><span class=o>.</span><span class=n>get_relevant_documents</span><span class=p>(</span><span class=n>question</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>for</span> <span class=n>d</span> <span class=ow>in</span> <span class=n>docs</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=nb>print</span><span class=p>(</span><span class=n>d</span><span class=o>.</span><span class=n>metadata</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=c1># {&#39;source&#39;: &#39;docs/cs229_lectures/MachineLearning-Lecture03.pdf&#39;, &#39;page&#39;: 0}</span>
+</span></span><span class=line><span class=cl><span class=c1># {&#39;source&#39;: &#39;docs/cs229_lectures/MachineLearning-Lecture03.pdf&#39;, &#39;page&#39;: 14}</span>
+</span></span><span class=line><span class=cl><span class=c1># {&#39;source&#39;: &#39;docs/cs229_lectures/MachineLearning-Lecture03.pdf&#39;, &#39;page&#39;: 4} </span>
+</span></span></code></pre></td></tr></table></div></div><p>可以看到，语义部分表明这是一个关于回归的查询。过滤器部分表明我们只想看那些source值为指定值的文档。</p><p>而从打印出的元数据看，它们都来自指定的那一堂课，说明自查询检索器确实可以用来精确地进行元数据过滤。</p><h2 id=解决相关性使用上下文压缩提取出与查询最相关的部分>解决相关性：使用上下文压缩提取出与查询最相关的部分</h2><p>提高检索文档质量的另一种方法是压缩。</p><p>当你提出一个问题时，你会得到整个存储的文档，但可能只有其中一小部分是跟问题相关的。</p><p>也就是说，与查询最相关的信息可能被隐藏在包含大量无关文本的文档里。</p><p>上下文压缩就是为了解决这个问题的。</p><p><strong>通过压缩，你可以先让语言模型提取出最相关的片段，然后只把最相关的片段传给最终的语言模型调用</strong>。</p><p>这会增加语言模型调用的成本，但也会让最终的答案更集中在最重要的内容上，这需要我们自己权衡。</p><h3 id=步骤1创建上下文压缩检索器>步骤1：创建上下文压缩检索器</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>from</span> <span class=nn>langchain.retrievers</span> <span class=kn>import</span> <span class=n>ContextualCompressionRetriever</span>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>langchain.retrievers.document_compressors</span> <span class=kn>import</span> <span class=n>LLMChainExtractor</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 包装我们的向量存储</span>
+</span></span><span class=line><span class=cl><span class=n>llm</span> <span class=o>=</span> <span class=n>OpenAI</span><span class=p>(</span><span class=n>temperature</span><span class=o>=</span><span class=mi>0</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>compressor</span> <span class=o>=</span> <span class=n>LLMChainExtractor</span><span class=o>.</span><span class=n>from_llm</span><span class=p>(</span><span class=n>llm</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>compression_retriever</span> <span class=o>=</span> <span class=n>ContextualCompressionRetriever</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>base_compressor</span><span class=o>=</span><span class=n>compressor</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>base_retriever</span><span class=o>=</span><span class=n>vectordb</span><span class=o>.</span><span class=n>as_retriever</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=步骤2提出问题检索压缩后的相关文档>步骤2：提出问题，检索压缩后的相关文档</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>question</span> <span class=o>=</span> <span class=s2>&#34;what did they say about matlab?&#34;</span>
+</span></span><span class=line><span class=cl><span class=n>compressed_docs</span> <span class=o>=</span> <span class=n>compression_retriever</span><span class=o>.</span><span class=n>get_relevant_documents</span><span class=p>(</span><span class=n>question</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>pretty_print_docs</span><span class=p>(</span><span class=n>compressed_docs</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>从压缩后的文档我们可以看到， 一，它们比普通的文档短得多； 二，仍然有重复的内容，这是因为底层我们还是用的语义搜索算法。</p><p>为了解决内容重复的问题，我们可以在创建检索器时，结合前面的内容，把搜索类型设置为MMR。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>compression_retriever</span> <span class=o>=</span> <span class=n>ContextualCompressionRetriever</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>base_compressor</span><span class=o>=</span><span class=n>compressor</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>base_retriever</span><span class=o>=</span><span class=n>vectordb</span><span class=o>.</span><span class=n>as_retriever</span><span class=p>(</span><span class=n>search_type</span> <span class=o>=</span> <span class=s2>&#34;mmr&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>question</span> <span class=o>=</span> <span class=s2>&#34;what did they say about matlab?&#34;</span>
+</span></span><span class=line><span class=cl><span class=n>compressed_docs</span> <span class=o>=</span> <span class=n>compression_retriever</span><span class=o>.</span><span class=n>get_relevant_documents</span><span class=p>(</span><span class=n>question</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>pretty_print_docs</span><span class=p>(</span><span class=n>compressed_docs</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>重新运行之后，我们得到的就是一个没有任何重复信息的过滤后的结果集了。</p><p>下一步，我们将讨论如何使用这些检索到的文档来回答用户的问题。</p><h2 id=问答>问答</h2><p>在这节课中，我们将学习如何利用检索到的文档来回答用户的问题。</p><p><img src=/p/iii-%E5%9F%BA%E4%BA%8E%E7%A7%81%E6%9C%89%E6%95%B0%E6%8D%AE%E4%BD%BF%E7%94%A8langchain%E6%9E%84%E5%BB%BA%E8%81%8A%E5%A4%A9%E6%9C%BA%E5%99%A8%E4%BA%BA/iShot_2023-08-30_22.56.33.png width=1590 height=1500 srcset="/p/iii-%E5%9F%BA%E4%BA%8E%E7%A7%81%E6%9C%89%E6%95%B0%E6%8D%AE%E4%BD%BF%E7%94%A8langchain%E6%9E%84%E5%BB%BA%E8%81%8A%E5%A4%A9%E6%9C%BA%E5%99%A8%E4%BA%BA/iShot_2023-08-30_22.56.33_hu4b720dde1dec598afcf107b1b473af97_416237_480x0_resize_box_3.png 480w, /p/iii-%E5%9F%BA%E4%BA%8E%E7%A7%81%E6%9C%89%E6%95%B0%E6%8D%AE%E4%BD%BF%E7%94%A8langchain%E6%9E%84%E5%BB%BA%E8%81%8A%E5%A4%A9%E6%9C%BA%E5%99%A8%E4%BA%BA/iShot_2023-08-30_22.56.33_hu4b720dde1dec598afcf107b1b473af97_416237_1024x0_resize_box_3.png 1024w" loading=lazy class=gallery-image data-flex-grow=106 data-flex-basis=254px></p><p>整个过程可以拆分为以下几个步骤：</p><ol><li>用户输入一个问题（Question）</li><li>从向量存储（Store）中检索出与问题相关的文档分块（Relavant splits）</li><li>将这些分块连同系统提示（System:Prompt）和用户问题（Human:Question）一起作为输入传给语言模型（LLM）</li><li>语言模型根据输入生成答案（Answer）</li></ol><p>默认使用的是<code>stuff</code>方法，其特点如下：</p><div class=table-wrapper><table><thead><tr><th>特点</th><th>优点</th><th>缺点</th></tr></thead><tbody><tr><td>将所有检索到的分块放入同一个上下文窗口中，只需要对语言模型进行一次调用。</td><td>简单、廉价且效果不错。</td><td>当检索到的文档过多时，由于上下文窗口长度有限，可能无法将所有分块都传入。</td></tr></tbody></table></div><p><img src=/p/iii-%E5%9F%BA%E4%BA%8E%E7%A7%81%E6%9C%89%E6%95%B0%E6%8D%AE%E4%BD%BF%E7%94%A8langchain%E6%9E%84%E5%BB%BA%E8%81%8A%E5%A4%A9%E6%9C%BA%E5%99%A8%E4%BA%BA/iShot_2023-08-30_22.57.35.png width=1542 height=1538 srcset="/p/iii-%E5%9F%BA%E4%BA%8E%E7%A7%81%E6%9C%89%E6%95%B0%E6%8D%AE%E4%BD%BF%E7%94%A8langchain%E6%9E%84%E5%BB%BA%E8%81%8A%E5%A4%A9%E6%9C%BA%E5%99%A8%E4%BA%BA/iShot_2023-08-30_22.57.35_hue19c129da1903c418fc91f87618e507c_474016_480x0_resize_box_3.png 480w, /p/iii-%E5%9F%BA%E4%BA%8E%E7%A7%81%E6%9C%89%E6%95%B0%E6%8D%AE%E4%BD%BF%E7%94%A8langchain%E6%9E%84%E5%BB%BA%E8%81%8A%E5%A4%A9%E6%9C%BA%E5%99%A8%E4%BA%BA/iShot_2023-08-30_22.57.35_hue19c129da1903c418fc91f87618e507c_474016_1024x0_resize_box_3.png 1024w" loading=lazy class=gallery-image data-flex-grow=100 data-flex-basis=240px></p><p>为了解决上下文窗口长度限制的问题，我们可以使用<code>Map-reduce</code>、<code>Refine</code>和<code>Map-rerank</code>三种方法，这些方法我们在之前的课程中已经简要介绍过了，今天我们将进一步深入了解。</p><h2 id=stuff>stuff</h2><h3 id=步骤1加载之前保存的向量数据库>步骤1：加载之前保存的向量数据库</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>from</span> <span class=nn>langchain.vectorstores</span> <span class=kn>import</span> <span class=n>Chroma</span>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>langchain.embeddings.openai</span> <span class=kn>import</span> <span class=n>OpenAIEmbeddings</span>
+</span></span><span class=line><span class=cl><span class=n>persist_directory</span> <span class=o>=</span> <span class=s1>&#39;docs/chroma/&#39;</span>
+</span></span><span class=line><span class=cl><span class=n>embedding</span> <span class=o>=</span> <span class=n>OpenAIEmbeddings</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=n>vectordb</span> <span class=o>=</span> <span class=n>Chroma</span><span class=p>(</span><span class=n>persist_directory</span><span class=o>=</span><span class=n>persist_directory</span><span class=p>,</span> <span class=n>embedding_function</span><span class=o>=</span><span class=n>embedding</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=步骤2初始化将用于回答问题的语言模型>步骤2：初始化将用于回答问题的语言模型</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>llm_name</span> <span class=o>=</span> <span class=s2>&#34;gpt-3.5-turbo&#34;</span>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>langchain.chat_models</span> <span class=kn>import</span> <span class=n>ChatOpenAI</span>
+</span></span><span class=line><span class=cl><span class=n>llm</span> <span class=o>=</span> <span class=n>ChatOpenAI</span><span class=p>(</span><span class=n>model_name</span><span class=o>=</span><span class=n>llm_name</span><span class=p>,</span> <span class=n>temperature</span><span class=o>=</span><span class=mi>0</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>temperature参数设置为0，可以帮助我们得到更准确的答案，因为它降低了语言模型的可变性，通常能给我们最高置信度、最可靠的答案。</p><h3 id=步骤3导入创建调用检索问答链输入问题并获取答案>步骤3：导入、创建、调用检索问答链，输入问题，并获取答案</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>question</span> <span class=o>=</span> <span class=s2>&#34;What are major topics for this class?&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>langchain.chains</span> <span class=kn>import</span> <span class=n>RetrievalQA</span>
+</span></span><span class=line><span class=cl><span class=n>qa_chain</span> <span class=o>=</span> <span class=n>RetrievalQA</span><span class=o>.</span><span class=n>from_chain_type</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>llm</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>retriever</span><span class=o>=</span><span class=n>vectordb</span><span class=o>.</span><span class=n>as_retriever</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>result</span> <span class=o>=</span> <span class=n>qa_chain</span><span class=p>({</span><span class=s2>&#34;query&#34;</span><span class=p>:</span> <span class=n>question</span><span class=p>})</span>
+</span></span><span class=line><span class=cl><span class=n>result</span><span class=p>[</span><span class=s2>&#34;result&#34;</span><span class=p>]</span>
+</span></span></code></pre></td></tr></table></div></div><blockquote><p>&lsquo;The major topic for this class is machine learning. Additionally, the class may cover statistics and algebra as refreshers in the discussion sections. Later in the quarter, the discussion sections will also cover extensions for the material taught in the main lectures.&rsquo;</p></blockquote><h3 id=步骤4使用提示模板优化输出结果>步骤4：使用提示模板优化输出结果</h3><p>提示模板是一种可以帮助语言模型生成更符合要求的输出结果的技巧，这里我们使用的提示模板主要是为了让输出结果更简洁、更少编造、更礼貌。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>from</span> <span class=nn>langchain.prompts</span> <span class=kn>import</span> <span class=n>PromptTemplate</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 构建提示词</span>
+</span></span><span class=line><span class=cl><span class=c1># {context}：上下文占位符，用于放置文档内容</span>
+</span></span><span class=line><span class=cl><span class=c1># {question}：问题占位符，放置要查询的问题</span>
+</span></span><span class=line><span class=cl><span class=n>template</span> <span class=o>=</span> <span class=s2>&#34;&#34;&#34;Use the following pieces of context to answer the question at the end. If you don&#39;t know the answer, just say that you don&#39;t know, don&#39;t try to make up an answer. Use three sentences maximum. Keep the answer as concise as possible. Always say &#34;thanks for asking!&#34; at the end of the answer. 
+</span></span></span><span class=line><span class=cl><span class=s2></span><span class=si>{context}</span><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>Question: </span><span class=si>{question}</span><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>Helpful Answer:&#34;&#34;&#34;</span>
+</span></span><span class=line><span class=cl><span class=n>QA_CHAIN_PROMPT</span> <span class=o>=</span> <span class=n>PromptTemplate</span><span class=o>.</span><span class=n>from_template</span><span class=p>(</span><span class=n>template</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 运行链</span>
+</span></span><span class=line><span class=cl><span class=c1># return_source_documents=True用于支持查看检索到的文档</span>
+</span></span><span class=line><span class=cl><span class=n>qa_chain</span> <span class=o>=</span> <span class=n>RetrievalQA</span><span class=o>.</span><span class=n>from_chain_type</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>llm</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>retriever</span><span class=o>=</span><span class=n>vectordb</span><span class=o>.</span><span class=n>as_retriever</span><span class=p>(),</span>
+</span></span><span class=line><span class=cl>    <span class=n>return_source_documents</span><span class=o>=</span><span class=kc>True</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>chain_type_kwargs</span><span class=o>=</span><span class=p>{</span><span class=s2>&#34;prompt&#34;</span><span class=p>:</span> <span class=n>QA_CHAIN_PROMPT</span><span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>question</span> <span class=o>=</span> <span class=s2>&#34;Is probability a class topic?&#34;</span>
+</span></span><span class=line><span class=cl><span class=n>result</span> <span class=o>=</span> <span class=n>qa_chain</span><span class=p>({</span><span class=s2>&#34;query&#34;</span><span class=p>:</span> <span class=n>question</span><span class=p>})</span>
+</span></span><span class=line><span class=cl><span class=n>result</span><span class=p>[</span><span class=s2>&#34;result&#34;</span><span class=p>]</span>
+</span></span></code></pre></td></tr></table></div></div><blockquote><p>&lsquo;Yes, probability is assumed to be a prerequisite for this class. The instructor assumes familiarity with basic probability and statistics, and will go over some of the prerequisites in the discussion sections as a refresher course. Thanks for asking!&rsquo;</p></blockquote><h3 id=步骤5查看返回的源文档理解其从哪里获取数据>步骤5：查看返回的源文档，理解其从哪里获取数据</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>result</span><span class=p>[</span><span class=s2>&#34;source_documents&#34;</span><span class=p>][</span><span class=mi>0</span><span class=p>]</span>
+</span></span></code></pre></td></tr></table></div></div><blockquote><p>Document(page_content=&ldquo;of this class will not be very program ming intensive, although we will do some \nprogramming, mostly in either MATLAB or Octa ve. I&rsquo;ll say a bit more about that later. \nI also assume familiarity with basic proba bility and statistics. So most undergraduate \nstatistics class, like Stat 116 taught here at Stanford, will be more than enough. I&rsquo;m gonna \nassume all of you know what ra ndom variables are, that all of you know what expectation \nis, what a variance or a random variable is. And in case of some of you, it&rsquo;s been a while \nsince you&rsquo;ve seen some of this material. At some of the discussion sections, we&rsquo;ll actually \ngo over some of the prerequisites, sort of as a refresher course under prerequisite class. \nI&rsquo;ll say a bit more about that later as well. \nLastly, I also assume familiarity with basi c linear algebra. And again, most undergraduate \nlinear algebra courses are more than enough. So if you&rsquo;ve taken courses like Math 51, \n103, Math 113 or CS205 at Stanford, that would be more than enough. Basically, I&rsquo;m \ngonna assume that all of you know what matrix es and vectors are, that you know how to \nmultiply matrices and vectors and multiply matrix and matrices, that you know what a matrix inverse is. If you know what an eigenvect or of a matrix is, that&rsquo;d be even better. \nBut if you don&rsquo;t quite know or if you&rsquo;re not qu ite sure, that&rsquo;s fine, too. We&rsquo;ll go over it in \nthe review sections.&rdquo;, metadata={&lsquo;source&rsquo;: &lsquo;docs/cs229_lectures/MachineLearning-Lecture01.pdf&rsquo;, &lsquo;page&rsquo;: 4})</p></blockquote><h2 id=map-reduce>Map-reduce</h2><p>Map-reduce方法的特点如下：</p><div class=table-wrapper><table><thead><tr><th>特点</th><th>优点</th><th>缺点</th></tr></thead><tbody><tr><td>1.将每个文档单独发送到语言模型中，根据单个文档生成答案；</td><td>可以处理任意数量的文档。</td><td>1.涉及到对语言模型的多次调用，速度较慢；</td></tr><tr><td>2.将所有这些答案组合在一起，再调用语言模型生成最终答案。</td><td></td><td>2.信息可能分散在不同的文档中，无法基于同一个上下文获取信息，结果可能不准确。</td></tr></tbody></table></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>qa_chain_mr</span> <span class=o>=</span> <span class=n>RetrievalQA</span><span class=o>.</span><span class=n>from_chain_type</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>llm</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>retriever</span><span class=o>=</span><span class=n>vectordb</span><span class=o>.</span><span class=n>as_retriever</span><span class=p>(),</span>
+</span></span><span class=line><span class=cl>    <span class=n>chain_type</span><span class=o>=</span><span class=s2>&#34;map_reduce&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>result</span> <span class=o>=</span> <span class=n>qa_chain_mr</span><span class=p>({</span><span class=s2>&#34;query&#34;</span><span class=p>:</span> <span class=n>question</span><span class=p>})</span>
+</span></span><span class=line><span class=cl><span class=n>result</span><span class=p>[</span><span class=s2>&#34;result&#34;</span><span class=p>]</span>
+</span></span></code></pre></td></tr></table></div></div><blockquote><p>&lsquo;There is no clear answer to this question based on the given portion of the document. The document mentions familiarity with basic probability and statistics as a prerequisite for the class, and there is a brief mention of probability in the text, but it is not clear if it is a main topic of the class.&rsquo;</p></blockquote><h3 id=使用langsmith平台了解这些链内部的调用情况>使用LangSmith平台了解这些链内部的调用情况</h3><p>LangSmith 是一个用于构建生产级 LLM 应用程序的平台。</p><p>它可以让您轻松地调试、测试、评估和监控基于任何 LLM 框架构建的链和智能代理，并与使用 LLM 构建的开源框架 LangChain 完美集成。</p><p>要体验这个平台的功能，你需要：</p><ol><li>前往<a class=link href="https://link.juejin.cn/?target=https%3A%2F%2Fsmith.langchain.com%2F" title=https://smith.langchain.com/ target=_blank rel=noopener>LangSmith平台</a>注册（可能需要排队）</li><li>创建 API 密钥</li><li>在以下代码中使用这个 API 密钥</li><li>取消注释以下代码，并重新运行MapReduce链</li></ol><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>import</span> <span class=nn>os</span>
+</span></span><span class=line><span class=cl><span class=n>os</span><span class=o>.</span><span class=n>environ</span><span class=p>[</span><span class=s2>&#34;LANGCHAIN_TRACING_V2&#34;</span><span class=p>]</span> <span class=o>=</span> <span class=s2>&#34;true&#34;</span>
+</span></span><span class=line><span class=cl><span class=n>os</span><span class=o>.</span><span class=n>environ</span><span class=p>[</span><span class=s2>&#34;LANGCHAIN_ENDPOINT&#34;</span><span class=p>]</span> <span class=o>=</span> <span class=s2>&#34;https://api.langchain.plus&#34;</span>
+</span></span><span class=line><span class=cl><span class=n>os</span><span class=o>.</span><span class=n>environ</span><span class=p>[</span><span class=s2>&#34;LANGCHAIN_API_KEY&#34;</span><span class=p>]</span> <span class=o>=</span> <span class=s2>&#34;...&#34;</span> <span class=c1># 替换...为你的 API 密钥</span>
+</span></span></code></pre></td></tr></table></div></div><p>之后，就可以切换到LangSmith平台，找到刚刚运行的RetrievalQA，查看输入、输出以及调用链了：</p><p>可以看到，MapReduceDocumentChain中涉及到了对语言模型的四次独立调用，点击其中一个，就可以看到每个文档的具体输入和输出：</p><p>并且，可以看到，它们在最后的链中被合并为了StuffDocumentChain，也即把所有结果放到了最终调用中。点击进入就可以看到，系统消息中包含了来自前面文档的四个摘要：</p><h2 id=refine>Refine</h2><p>Refine方法的特点如下：</p><div class=table-wrapper><table><thead><tr><th>特点</th><th>优点</th><th>缺点</th></tr></thead><tbody><tr><td>迭代地处理多个文档，基于前一个文档的答案来构建一个更好的答案。</td><td>允许组合信息，更鼓励信息的传递</td><td>速度较慢</td></tr></tbody></table></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>qa_chain_mr</span> <span class=o>=</span> <span class=n>RetrievalQA</span><span class=o>.</span><span class=n>from_chain_type</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>llm</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>retriever</span><span class=o>=</span><span class=n>vectordb</span><span class=o>.</span><span class=n>as_retriever</span><span class=p>(),</span>
+</span></span><span class=line><span class=cl>    <span class=n>chain_type</span><span class=o>=</span><span class=s2>&#34;refine&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>result</span> <span class=o>=</span> <span class=n>qa_chain_mr</span><span class=p>({</span><span class=s2>&#34;query&#34;</span><span class=p>:</span> <span class=n>question</span><span class=p>})</span>
+</span></span><span class=line><span class=cl><span class=n>result</span><span class=p>[</span><span class=s2>&#34;result&#34;</span><span class=p>]</span>
+</span></span></code></pre></td></tr></table></div></div><blockquote><p>&ldquo;The main topic of the class is machine learning algorithms, including linear regression and classification. Basic probability and statistics, as well as linear algebra, are prerequisites for the class, but the instructor will provide a refresher course on these topics in some of the discussion sections. Later in the quarter, the discussion sections will also cover extensions for the material taught in the main lectures. The instructor will focus on a few important extensions that there wasn&rsquo;t enough time to cover in the main lectures.&rdquo;</p></blockquote><p>现在还有一个问题，我们目前使用的链是没有“记忆”这个概念的，这就导致了它不会记住之前的问题或答案。为了解决这个问题，我们需要引入“记忆”功能，这就是我们下一节要讲的内容。</p><h2 id=chat>Chat</h2><p>在这节课中，我们将构建一个完整的问答聊天机器人，它将结合我们之前讲过的所有组件，并引入“聊天历史”这个概念，让它在回答问题时能够考虑到之前的对话或信息，也就是说，它能记住你之前说过什么。</p><h3 id=步骤1初始化用于保存大量文档内容的向量数据库>步骤1：初始化用于保存大量文档内容的向量数据库</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>from</span> <span class=nn>langchain.vectorstores</span> <span class=kn>import</span> <span class=n>Chroma</span>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>langchain.embeddings.openai</span> <span class=kn>import</span> <span class=n>OpenAIEmbeddings</span>
+</span></span><span class=line><span class=cl><span class=n>persist_directory</span> <span class=o>=</span> <span class=s1>&#39;docs/chroma/&#39;</span>
+</span></span><span class=line><span class=cl><span class=n>embedding</span> <span class=o>=</span> <span class=n>OpenAIEmbeddings</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=n>vectordb</span> <span class=o>=</span> <span class=n>Chroma</span><span class=p>(</span><span class=n>persist_directory</span><span class=o>=</span><span class=n>persist_directory</span><span class=p>,</span> <span class=n>embedding_function</span><span class=o>=</span><span class=n>embedding</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=步骤2初始化将作为聊天机器人使用的语言模型>步骤2：初始化将作为聊天机器人使用的语言模型</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>llm_name</span> <span class=o>=</span> <span class=s2>&#34;gpt-3.5-turbo&#34;</span>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>langchain.chat_models</span> <span class=kn>import</span> <span class=n>ChatOpenAI</span>
+</span></span><span class=line><span class=cl><span class=n>llm</span> <span class=o>=</span> <span class=n>ChatOpenAI</span><span class=p>(</span><span class=n>model_name</span><span class=o>=</span><span class=n>llm_name</span><span class=p>,</span> <span class=n>temperature</span><span class=o>=</span><span class=mi>0</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=步骤3初始化提示模板让输出结果更简介更少编造更礼貌>步骤3：初始化提示模板，让输出结果更简介、更少编造、更礼貌</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=c1># 构建提示</span>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>langchain.prompts</span> <span class=kn>import</span> <span class=n>PromptTemplate</span>
+</span></span><span class=line><span class=cl><span class=n>template</span> <span class=o>=</span> <span class=s2>&#34;&#34;&#34;Use the following pieces of context to answer the question at the end. If you don&#39;t know the answer, just say that you don&#39;t know, don&#39;t try to make up an answer. Use three sentences maximum. Keep the answer as concise as possible. Always say &#34;thanks for asking!&#34; at the end of the answer. 
+</span></span></span><span class=line><span class=cl><span class=s2></span><span class=si>{context}</span><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>Question: </span><span class=si>{question}</span><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>Helpful Answer:&#34;&#34;&#34;</span>
+</span></span><span class=line><span class=cl><span class=n>QA_CHAIN_PROMPT</span> <span class=o>=</span> <span class=n>PromptTemplate</span><span class=p>(</span><span class=n>input_variables</span><span class=o>=</span><span class=p>[</span><span class=s2>&#34;context&#34;</span><span class=p>,</span> <span class=s2>&#34;question&#34;</span><span class=p>],</span><span class=n>template</span><span class=o>=</span><span class=n>template</span><span class=p>,)</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=步骤4创建检索qa链用于合并检索到的文本片段并调用语言模型>步骤4：创建检索QA链，用于合并检索到的文本片段并调用语言模型</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=c1># 运行链</span>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>langchain.chains</span> <span class=kn>import</span> <span class=n>RetrievalQA</span>
+</span></span><span class=line><span class=cl><span class=n>qa_chain</span> <span class=o>=</span> <span class=n>RetrievalQA</span><span class=o>.</span><span class=n>from_chain_type</span><span class=p>(</span><span class=n>llm</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                                       <span class=n>retriever</span><span class=o>=</span><span class=n>vectordb</span><span class=o>.</span><span class=n>as_retriever</span><span class=p>(),</span>
+</span></span><span class=line><span class=cl>                                       <span class=n>return_source_documents</span><span class=o>=</span><span class=kc>True</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                                       <span class=n>chain_type_kwargs</span><span class=o>=</span><span class=p>{</span><span class=s2>&#34;prompt&#34;</span><span class=p>:</span> <span class=n>QA_CHAIN_PROMPT</span><span class=p>})</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=步骤5使用conversationbuffermemory增加聊天机器人的记忆功能>步骤5：使用ConversationBufferMemory增加聊天机器人的记忆功能</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>from</span> <span class=nn>langchain.memory</span> <span class=kn>import</span> <span class=n>ConversationBufferMemory</span>
+</span></span><span class=line><span class=cl><span class=n>memory</span> <span class=o>=</span> <span class=n>ConversationBufferMemory</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>memory_key</span><span class=o>=</span><span class=s2>&#34;chat_history&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>return_messages</span><span class=o>=</span><span class=kc>True</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>ConversationBufferMemory提供了一个聊天消息历史的记忆缓冲区，并且每次都会将这部分历史消息传入聊天机器人。</p><p>return_messages=True表示将返回一个列表类型的聊天历史记录，而不是一个字符串。</p><h3 id=步骤6创建conversationalretrievalchain对话检索链传入语言模型检索器和记忆系统>步骤6：创建ConversationalRetrievalChain（对话检索链），传入语言模型、检索器和记忆系统</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>from</span> <span class=nn>langchain.chains</span> <span class=kn>import</span> <span class=n>ConversationalRetrievalChain</span>
+</span></span><span class=line><span class=cl><span class=n>retriever</span><span class=o>=</span><span class=n>vectordb</span><span class=o>.</span><span class=n>as_retriever</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=n>qa</span> <span class=o>=</span> <span class=n>ConversationalRetrievalChain</span><span class=o>.</span><span class=n>from_llm</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>llm</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>retriever</span><span class=o>=</span><span class=n>retriever</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>memory</span><span class=o>=</span><span class=n>memory</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>ConversationalRetrievalChain会在RetrievalQAChain的基础上，将聊天历史和新提的问题整合成一个新的独立问题，以传递给向量存储库，查找相关文档。</p><h3 id=步骤7使用pypdfloader加载所要参考的文档>步骤7：使用PyPDFLoader加载所要参考的文档</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>from</span> <span class=nn>langchain.embeddings.openai</span> <span class=kn>import</span> <span class=n>OpenAIEmbeddings</span>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>langchain.text_splitter</span> <span class=kn>import</span> <span class=n>CharacterTextSplitter</span><span class=p>,</span> <span class=n>RecursiveCharacterTextSplitter</span>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>langchain.vectorstores</span> <span class=kn>import</span> <span class=n>DocArrayInMemorySearch</span>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>langchain.document_loaders</span> <span class=kn>import</span> <span class=n>TextLoader</span>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>langchain.chains</span> <span class=kn>import</span> <span class=n>RetrievalQA</span><span class=p>,</span>  <span class=n>ConversationalRetrievalChain</span>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>langchain.memory</span> <span class=kn>import</span> <span class=n>ConversationBufferMemory</span>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>langchain.chat_models</span> <span class=kn>import</span> <span class=n>ChatOpenAI</span>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>langchain.document_loaders</span> <span class=kn>import</span> <span class=n>TextLoader</span>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>langchain.document_loaders</span> <span class=kn>import</span> <span class=n>PyPDFLoader</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>def</span> <span class=nf>load_db</span><span class=p>(</span><span class=n>file</span><span class=p>,</span> <span class=n>chain_type</span><span class=p>,</span> <span class=n>k</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=c1># 加载文档</span>
+</span></span><span class=line><span class=cl>    <span class=n>loader</span> <span class=o>=</span> <span class=n>PyPDFLoader</span><span class=p>(</span><span class=n>file</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=n>documents</span> <span class=o>=</span> <span class=n>loader</span><span class=o>.</span><span class=n>load</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=o>...</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=步骤8分割文档为每个分块创建嵌入并存储到向量存储库中>步骤8：分割文档，为每个分块创建嵌入，并存储到向量存储库中。</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>def</span> <span class=nf>load_db</span><span class=p>(</span><span class=n>file</span><span class=p>,</span> <span class=n>chain_type</span><span class=p>,</span> <span class=n>k</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=o>...</span>
+</span></span><span class=line><span class=cl>    <span class=c1># 分隔文档</span>
+</span></span><span class=line><span class=cl>    <span class=n>text_splitter</span> <span class=o>=</span> <span class=n>RecursiveCharacterTextSplitter</span><span class=p>(</span><span class=n>chunk_size</span><span class=o>=</span><span class=mi>1000</span><span class=p>,</span> <span class=n>chunk_overlap</span><span class=o>=</span><span class=mi>150</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=n>docs</span> <span class=o>=</span> <span class=n>text_splitter</span><span class=o>.</span><span class=n>split_documents</span><span class=p>(</span><span class=n>documents</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=c1># 定义嵌入</span>
+</span></span><span class=line><span class=cl>    <span class=n>embeddings</span> <span class=o>=</span> <span class=n>OpenAIEmbeddings</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=c1># 基于文档数据创建向量数据库</span>
+</span></span><span class=line><span class=cl>    <span class=n>db</span> <span class=o>=</span> <span class=n>DocArrayInMemorySearch</span><span class=o>.</span><span class=n>from_documents</span><span class=p>(</span><span class=n>docs</span><span class=p>,</span> <span class=n>embeddings</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=o>...</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=步骤9从向量数据库创建一个基于相似度的检索器>步骤9：从向量数据库创建一个基于“相似度”的检索器。</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>def</span> <span class=nf>load_db</span><span class=p>(</span><span class=n>file</span><span class=p>,</span> <span class=n>chain_type</span><span class=p>,</span> <span class=n>k</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=o>...</span>
+</span></span><span class=line><span class=cl>    <span class=c1># 定义检索器</span>
+</span></span><span class=line><span class=cl>    <span class=n>retriever</span> <span class=o>=</span> <span class=n>db</span><span class=o>.</span><span class=n>as_retriever</span><span class=p>(</span><span class=n>search_type</span><span class=o>=</span><span class=s2>&#34;similarity&#34;</span><span class=p>,</span> <span class=n>search_kwargs</span><span class=o>=</span><span class=p>{</span><span class=s2>&#34;k&#34;</span><span class=p>:</span> <span class=n>k</span><span class=p>})</span>
+</span></span><span class=line><span class=cl>    <span class=o>...</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=步骤10创建对话检索链用于将聊天历史和新提的问题整合成一个新的独立问题>步骤10：创建对话检索链，用于将聊天历史和新提的问题整合成一个新的独立问题</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>def</span> <span class=nf>load_db</span><span class=p>(</span><span class=n>file</span><span class=p>,</span> <span class=n>chain_type</span><span class=p>,</span> <span class=n>k</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=o>...</span>
+</span></span><span class=line><span class=cl>    <span class=c1># create a chatbot chain. Memory is managed externally.</span>
+</span></span><span class=line><span class=cl>    <span class=n>qa</span> <span class=o>=</span> <span class=n>ConversationalRetrievalChain</span><span class=o>.</span><span class=n>from_llm</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>        <span class=n>llm</span><span class=o>=</span><span class=n>ChatOpenAI</span><span class=p>(</span><span class=n>model_name</span><span class=o>=</span><span class=n>llm_name</span><span class=p>,</span> <span class=n>temperature</span><span class=o>=</span><span class=mi>0</span><span class=p>),</span> 
+</span></span><span class=line><span class=cl>        <span class=n>chain_type</span><span class=o>=</span><span class=n>chain_type</span><span class=p>,</span> 
+</span></span><span class=line><span class=cl>        <span class=n>retriever</span><span class=o>=</span><span class=n>retriever</span><span class=p>,</span> 
+</span></span><span class=line><span class=cl>        <span class=n>return_source_documents</span><span class=o>=</span><span class=kc>True</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=n>return_generated_question</span><span class=o>=</span><span class=kc>True</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>qa</span> 
+</span></span></code></pre></td></tr></table></div></div><p>需要注意的是，这里我们并没有传入记忆系统，而是将记忆管理交给了GUI，这意味着聊天历史需要在链之外进行维护。</p><h3 id=步骤11提供一个与聊天机器人交互的用户界面>步骤11：提供一个与聊天机器人交互的用户界面</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span><span class=lnt>55
+</span><span class=lnt>56
+</span><span class=lnt>57
+</span><span class=lnt>58
+</span><span class=lnt>59
+</span><span class=lnt>60
+</span><span class=lnt>61
+</span><span class=lnt>62
+</span><span class=lnt>63
+</span><span class=lnt>64
+</span><span class=lnt>65
+</span><span class=lnt>66
+</span><span class=lnt>67
+</span><span class=lnt>68
+</span><span class=lnt>69
+</span><span class=lnt>70
+</span><span class=lnt>71
+</span><span class=lnt>72
+</span><span class=lnt>73
+</span><span class=lnt>74
+</span><span class=lnt>75
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>import</span> <span class=nn>panel</span> <span class=k>as</span> <span class=nn>pn</span>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=nn>param</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>class</span> <span class=nc>cbfs</span><span class=p>(</span><span class=n>param</span><span class=o>.</span><span class=n>Parameterized</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=n>chat_history</span> <span class=o>=</span> <span class=n>param</span><span class=o>.</span><span class=n>List</span><span class=p>([])</span>
+</span></span><span class=line><span class=cl>    <span class=n>answer</span> <span class=o>=</span> <span class=n>param</span><span class=o>.</span><span class=n>String</span><span class=p>(</span><span class=s2>&#34;&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=n>db_query</span>  <span class=o>=</span> <span class=n>param</span><span class=o>.</span><span class=n>String</span><span class=p>(</span><span class=s2>&#34;&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=n>db_response</span> <span class=o>=</span> <span class=n>param</span><span class=o>.</span><span class=n>List</span><span class=p>([])</span>
+</span></span><span class=line><span class=cl>    
+</span></span><span class=line><span class=cl>    <span class=k>def</span> <span class=fm>__init__</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span>  <span class=o>**</span><span class=n>params</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=nb>super</span><span class=p>(</span><span class=n>cbfs</span><span class=p>,</span> <span class=bp>self</span><span class=p>)</span><span class=o>.</span><span class=fm>__init__</span><span class=p>(</span> <span class=o>**</span><span class=n>params</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=bp>self</span><span class=o>.</span><span class=n>panels</span> <span class=o>=</span> <span class=p>[]</span>
+</span></span><span class=line><span class=cl>        <span class=bp>self</span><span class=o>.</span><span class=n>loaded_file</span> <span class=o>=</span> <span class=s2>&#34;docs/cs229_lectures/MachineLearning-Lecture01.pdf&#34;</span>
+</span></span><span class=line><span class=cl>        <span class=bp>self</span><span class=o>.</span><span class=n>qa</span> <span class=o>=</span> <span class=n>load_db</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>loaded_file</span><span class=p>,</span><span class=s2>&#34;stuff&#34;</span><span class=p>,</span> <span class=mi>4</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    
+</span></span><span class=line><span class=cl>    <span class=k>def</span> <span class=nf>call_load_db</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>count</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=n>count</span> <span class=o>==</span> <span class=mi>0</span> <span class=ow>or</span> <span class=n>file_input</span><span class=o>.</span><span class=n>value</span> <span class=ow>is</span> <span class=kc>None</span><span class=p>:</span>  <span class=c1># init or no file specified :</span>
+</span></span><span class=line><span class=cl>            <span class=k>return</span> <span class=n>pn</span><span class=o>.</span><span class=n>pane</span><span class=o>.</span><span class=n>Markdown</span><span class=p>(</span><span class=sa>f</span><span class=s2>&#34;Loaded File: </span><span class=si>{</span><span class=bp>self</span><span class=o>.</span><span class=n>loaded_file</span><span class=si>}</span><span class=s2>&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=k>else</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=n>file_input</span><span class=o>.</span><span class=n>save</span><span class=p>(</span><span class=s2>&#34;temp.pdf&#34;</span><span class=p>)</span>  <span class=c1># local copy</span>
+</span></span><span class=line><span class=cl>            <span class=bp>self</span><span class=o>.</span><span class=n>loaded_file</span> <span class=o>=</span> <span class=n>file_input</span><span class=o>.</span><span class=n>filename</span>
+</span></span><span class=line><span class=cl>            <span class=n>button_load</span><span class=o>.</span><span class=n>button_style</span><span class=o>=</span><span class=s2>&#34;outline&#34;</span>
+</span></span><span class=line><span class=cl>            <span class=bp>self</span><span class=o>.</span><span class=n>qa</span> <span class=o>=</span> <span class=n>load_db</span><span class=p>(</span><span class=s2>&#34;temp.pdf&#34;</span><span class=p>,</span> <span class=s2>&#34;stuff&#34;</span><span class=p>,</span> <span class=mi>4</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=n>button_load</span><span class=o>.</span><span class=n>button_style</span><span class=o>=</span><span class=s2>&#34;solid&#34;</span>
+</span></span><span class=line><span class=cl>        <span class=bp>self</span><span class=o>.</span><span class=n>clr_history</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>pn</span><span class=o>.</span><span class=n>pane</span><span class=o>.</span><span class=n>Markdown</span><span class=p>(</span><span class=sa>f</span><span class=s2>&#34;Loaded File: </span><span class=si>{</span><span class=bp>self</span><span class=o>.</span><span class=n>loaded_file</span><span class=si>}</span><span class=s2>&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>def</span> <span class=nf>convchain</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>query</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=ow>not</span> <span class=n>query</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=k>return</span> <span class=n>pn</span><span class=o>.</span><span class=n>WidgetBox</span><span class=p>(</span><span class=n>pn</span><span class=o>.</span><span class=n>Row</span><span class=p>(</span><span class=s1>&#39;User:&#39;</span><span class=p>,</span> <span class=n>pn</span><span class=o>.</span><span class=n>pane</span><span class=o>.</span><span class=n>Markdown</span><span class=p>(</span><span class=s2>&#34;&#34;</span><span class=p>,</span> <span class=n>width</span><span class=o>=</span><span class=mi>600</span><span class=p>)),</span> <span class=n>scroll</span><span class=o>=</span><span class=kc>True</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=n>result</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>qa</span><span class=p>({</span><span class=s2>&#34;question&#34;</span><span class=p>:</span> <span class=n>query</span><span class=p>,</span> <span class=s2>&#34;chat_history&#34;</span><span class=p>:</span> <span class=bp>self</span><span class=o>.</span><span class=n>chat_history</span><span class=p>})</span>
+</span></span><span class=line><span class=cl>        <span class=bp>self</span><span class=o>.</span><span class=n>chat_history</span><span class=o>.</span><span class=n>extend</span><span class=p>([(</span><span class=n>query</span><span class=p>,</span> <span class=n>result</span><span class=p>[</span><span class=s2>&#34;answer&#34;</span><span class=p>])])</span>
+</span></span><span class=line><span class=cl>        <span class=bp>self</span><span class=o>.</span><span class=n>db_query</span> <span class=o>=</span> <span class=n>result</span><span class=p>[</span><span class=s2>&#34;generated_question&#34;</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>        <span class=bp>self</span><span class=o>.</span><span class=n>db_response</span> <span class=o>=</span> <span class=n>result</span><span class=p>[</span><span class=s2>&#34;source_documents&#34;</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>        <span class=bp>self</span><span class=o>.</span><span class=n>answer</span> <span class=o>=</span> <span class=n>result</span><span class=p>[</span><span class=s1>&#39;answer&#39;</span><span class=p>]</span> 
+</span></span><span class=line><span class=cl>        <span class=bp>self</span><span class=o>.</span><span class=n>panels</span><span class=o>.</span><span class=n>extend</span><span class=p>([</span>
+</span></span><span class=line><span class=cl>            <span class=n>pn</span><span class=o>.</span><span class=n>Row</span><span class=p>(</span><span class=s1>&#39;User:&#39;</span><span class=p>,</span> <span class=n>pn</span><span class=o>.</span><span class=n>pane</span><span class=o>.</span><span class=n>Markdown</span><span class=p>(</span><span class=n>query</span><span class=p>,</span> <span class=n>width</span><span class=o>=</span><span class=mi>600</span><span class=p>)),</span>
+</span></span><span class=line><span class=cl>            <span class=n>pn</span><span class=o>.</span><span class=n>Row</span><span class=p>(</span><span class=s1>&#39;ChatBot:&#39;</span><span class=p>,</span> <span class=n>pn</span><span class=o>.</span><span class=n>pane</span><span class=o>.</span><span class=n>Markdown</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>answer</span><span class=p>,</span> <span class=n>width</span><span class=o>=</span><span class=mi>600</span><span class=p>,</span> <span class=n>style</span><span class=o>=</span><span class=p>{</span><span class=s1>&#39;background-color&#39;</span><span class=p>:</span> <span class=s1>&#39;#F6F6F6&#39;</span><span class=p>}))</span>
+</span></span><span class=line><span class=cl>        <span class=p>])</span>
+</span></span><span class=line><span class=cl>        <span class=n>inp</span><span class=o>.</span><span class=n>value</span> <span class=o>=</span> <span class=s1>&#39;&#39;</span>  <span class=c1>#clears loading indicator when cleared</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>pn</span><span class=o>.</span><span class=n>WidgetBox</span><span class=p>(</span><span class=o>*</span><span class=bp>self</span><span class=o>.</span><span class=n>panels</span><span class=p>,</span><span class=n>scroll</span><span class=o>=</span><span class=kc>True</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=nd>@param.depends</span><span class=p>(</span><span class=s1>&#39;db_query &#39;</span><span class=p>,</span> <span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>def</span> <span class=nf>get_lquest</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=ow>not</span> <span class=bp>self</span><span class=o>.</span><span class=n>db_query</span> <span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=k>return</span> <span class=n>pn</span><span class=o>.</span><span class=n>Column</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>                <span class=n>pn</span><span class=o>.</span><span class=n>Row</span><span class=p>(</span><span class=n>pn</span><span class=o>.</span><span class=n>pane</span><span class=o>.</span><span class=n>Markdown</span><span class=p>(</span><span class=sa>f</span><span class=s2>&#34;Last question to DB:&#34;</span><span class=p>,</span> <span class=n>styles</span><span class=o>=</span><span class=p>{</span><span class=s1>&#39;background-color&#39;</span><span class=p>:</span> <span class=s1>&#39;#F6F6F6&#39;</span><span class=p>})),</span>
+</span></span><span class=line><span class=cl>                <span class=n>pn</span><span class=o>.</span><span class=n>Row</span><span class=p>(</span><span class=n>pn</span><span class=o>.</span><span class=n>pane</span><span class=o>.</span><span class=n>Str</span><span class=p>(</span><span class=s2>&#34;no DB accesses so far&#34;</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>            <span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>pn</span><span class=o>.</span><span class=n>Column</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>            <span class=n>pn</span><span class=o>.</span><span class=n>Row</span><span class=p>(</span><span class=n>pn</span><span class=o>.</span><span class=n>pane</span><span class=o>.</span><span class=n>Markdown</span><span class=p>(</span><span class=sa>f</span><span class=s2>&#34;DB query:&#34;</span><span class=p>,</span> <span class=n>styles</span><span class=o>=</span><span class=p>{</span><span class=s1>&#39;background-color&#39;</span><span class=p>:</span> <span class=s1>&#39;#F6F6F6&#39;</span><span class=p>})),</span>
+</span></span><span class=line><span class=cl>            <span class=n>pn</span><span class=o>.</span><span class=n>pane</span><span class=o>.</span><span class=n>Str</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>db_query</span> <span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=nd>@param.depends</span><span class=p>(</span><span class=s1>&#39;db_response&#39;</span><span class=p>,</span> <span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>def</span> <span class=nf>get_sources</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=ow>not</span> <span class=bp>self</span><span class=o>.</span><span class=n>db_response</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=k>return</span> 
+</span></span><span class=line><span class=cl>        <span class=n>rlist</span><span class=o>=</span><span class=p>[</span><span class=n>pn</span><span class=o>.</span><span class=n>Row</span><span class=p>(</span><span class=n>pn</span><span class=o>.</span><span class=n>pane</span><span class=o>.</span><span class=n>Markdown</span><span class=p>(</span><span class=sa>f</span><span class=s2>&#34;Result of DB lookup:&#34;</span><span class=p>,</span> <span class=n>styles</span><span class=o>=</span><span class=p>{</span><span class=s1>&#39;background-color&#39;</span><span class=p>:</span> <span class=s1>&#39;#F6F6F6&#39;</span><span class=p>}))]</span>
+</span></span><span class=line><span class=cl>        <span class=k>for</span> <span class=n>doc</span> <span class=ow>in</span> <span class=bp>self</span><span class=o>.</span><span class=n>db_response</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=n>rlist</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=n>pn</span><span class=o>.</span><span class=n>Row</span><span class=p>(</span><span class=n>pn</span><span class=o>.</span><span class=n>pane</span><span class=o>.</span><span class=n>Str</span><span class=p>(</span><span class=n>doc</span><span class=p>)))</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>pn</span><span class=o>.</span><span class=n>WidgetBox</span><span class=p>(</span><span class=o>*</span><span class=n>rlist</span><span class=p>,</span> <span class=n>width</span><span class=o>=</span><span class=mi>600</span><span class=p>,</span> <span class=n>scroll</span><span class=o>=</span><span class=kc>True</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=nd>@param.depends</span><span class=p>(</span><span class=s1>&#39;convchain&#39;</span><span class=p>,</span> <span class=s1>&#39;clr_history&#39;</span><span class=p>)</span> 
+</span></span><span class=line><span class=cl>    <span class=k>def</span> <span class=nf>get_chats</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=ow>not</span> <span class=bp>self</span><span class=o>.</span><span class=n>chat_history</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=k>return</span> <span class=n>pn</span><span class=o>.</span><span class=n>WidgetBox</span><span class=p>(</span><span class=n>pn</span><span class=o>.</span><span class=n>Row</span><span class=p>(</span><span class=n>pn</span><span class=o>.</span><span class=n>pane</span><span class=o>.</span><span class=n>Str</span><span class=p>(</span><span class=s2>&#34;No History Yet&#34;</span><span class=p>)),</span> <span class=n>width</span><span class=o>=</span><span class=mi>600</span><span class=p>,</span> <span class=n>scroll</span><span class=o>=</span><span class=kc>True</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=n>rlist</span><span class=o>=</span><span class=p>[</span><span class=n>pn</span><span class=o>.</span><span class=n>Row</span><span class=p>(</span><span class=n>pn</span><span class=o>.</span><span class=n>pane</span><span class=o>.</span><span class=n>Markdown</span><span class=p>(</span><span class=sa>f</span><span class=s2>&#34;Current Chat History variable&#34;</span><span class=p>,</span> <span class=n>styles</span><span class=o>=</span><span class=p>{</span><span class=s1>&#39;background-color&#39;</span><span class=p>:</span> <span class=s1>&#39;#F6F6F6&#39;</span><span class=p>}))]</span>
+</span></span><span class=line><span class=cl>        <span class=k>for</span> <span class=n>exchange</span> <span class=ow>in</span> <span class=bp>self</span><span class=o>.</span><span class=n>chat_history</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=n>rlist</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=n>pn</span><span class=o>.</span><span class=n>Row</span><span class=p>(</span><span class=n>pn</span><span class=o>.</span><span class=n>pane</span><span class=o>.</span><span class=n>Str</span><span class=p>(</span><span class=n>exchange</span><span class=p>)))</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>pn</span><span class=o>.</span><span class=n>WidgetBox</span><span class=p>(</span><span class=o>*</span><span class=n>rlist</span><span class=p>,</span> <span class=n>width</span><span class=o>=</span><span class=mi>600</span><span class=p>,</span> <span class=n>scroll</span><span class=o>=</span><span class=kc>True</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>def</span> <span class=nf>clr_history</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span><span class=n>count</span><span class=o>=</span><span class=mi>0</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=bp>self</span><span class=o>.</span><span class=n>chat_history</span> <span class=o>=</span> <span class=p>[]</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> 
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>cb</span> <span class=o>=</span> <span class=n>cbfs</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>file_input</span> <span class=o>=</span> <span class=n>pn</span><span class=o>.</span><span class=n>widgets</span><span class=o>.</span><span class=n>FileInput</span><span class=p>(</span><span class=n>accept</span><span class=o>=</span><span class=s1>&#39;.pdf&#39;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>button_load</span> <span class=o>=</span> <span class=n>pn</span><span class=o>.</span><span class=n>widgets</span><span class=o>.</span><span class=n>Button</span><span class=p>(</span><span class=n>name</span><span class=o>=</span><span class=s2>&#34;Load DB&#34;</span><span class=p>,</span> <span class=n>button_type</span><span class=o>=</span><span class=s1>&#39;primary&#39;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>button_clearhistory</span> <span class=o>=</span> <span class=n>pn</span><span class=o>.</span><span class=n>widgets</span><span class=o>.</span><span class=n>Button</span><span class=p>(</span><span class=n>name</span><span class=o>=</span><span class=s2>&#34;Clear History&#34;</span><span class=p>,</span> <span class=n>button_type</span><span class=o>=</span><span class=s1>&#39;warning&#39;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>button_clearhistory</span><span class=o>.</span><span class=n>on_click</span><span class=p>(</span><span class=n>cb</span><span class=o>.</span><span class=n>clr_history</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>inp</span> <span class=o>=</span> <span class=n>pn</span><span class=o>.</span><span class=n>widgets</span><span class=o>.</span><span class=n>TextInput</span><span class=p>(</span> <span class=n>placeholder</span><span class=o>=</span><span class=s1>&#39;Enter text here…&#39;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>bound_button_load</span> <span class=o>=</span> <span class=n>pn</span><span class=o>.</span><span class=n>bind</span><span class=p>(</span><span class=n>cb</span><span class=o>.</span><span class=n>call_load_db</span><span class=p>,</span> <span class=n>button_load</span><span class=o>.</span><span class=n>param</span><span class=o>.</span><span class=n>clicks</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>conversation</span> <span class=o>=</span> <span class=n>pn</span><span class=o>.</span><span class=n>bind</span><span class=p>(</span><span class=n>cb</span><span class=o>.</span><span class=n>convchain</span><span class=p>,</span> <span class=n>inp</span><span class=p>)</span> 
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>jpg_pane</span> <span class=o>=</span> <span class=n>pn</span><span class=o>.</span><span class=n>pane</span><span class=o>.</span><span class=n>Image</span><span class=p>(</span> <span class=s1>&#39;./img/convchain.jpg&#39;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>tab1</span> <span class=o>=</span> <span class=n>pn</span><span class=o>.</span><span class=n>Column</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>pn</span><span class=o>.</span><span class=n>Row</span><span class=p>(</span><span class=n>inp</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>    <span class=n>pn</span><span class=o>.</span><span class=n>layout</span><span class=o>.</span><span class=n>Divider</span><span class=p>(),</span>
+</span></span><span class=line><span class=cl>    <span class=n>pn</span><span class=o>.</span><span class=n>panel</span><span class=p>(</span><span class=n>conversation</span><span class=p>,</span>  <span class=n>loading_indicator</span><span class=o>=</span><span class=kc>True</span><span class=p>,</span> <span class=n>height</span><span class=o>=</span><span class=mi>300</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>    <span class=n>pn</span><span class=o>.</span><span class=n>layout</span><span class=o>.</span><span class=n>Divider</span><span class=p>(),</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>tab2</span><span class=o>=</span> <span class=n>pn</span><span class=o>.</span><span class=n>Column</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>pn</span><span class=o>.</span><span class=n>panel</span><span class=p>(</span><span class=n>cb</span><span class=o>.</span><span class=n>get_lquest</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>    <span class=n>pn</span><span class=o>.</span><span class=n>layout</span><span class=o>.</span><span class=n>Divider</span><span class=p>(),</span>
+</span></span><span class=line><span class=cl>    <span class=n>pn</span><span class=o>.</span><span class=n>panel</span><span class=p>(</span><span class=n>cb</span><span class=o>.</span><span class=n>get_sources</span> <span class=p>),</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>tab3</span><span class=o>=</span> <span class=n>pn</span><span class=o>.</span><span class=n>Column</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>pn</span><span class=o>.</span><span class=n>panel</span><span class=p>(</span><span class=n>cb</span><span class=o>.</span><span class=n>get_chats</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>    <span class=n>pn</span><span class=o>.</span><span class=n>layout</span><span class=o>.</span><span class=n>Divider</span><span class=p>(),</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>tab4</span><span class=o>=</span><span class=n>pn</span><span class=o>.</span><span class=n>Column</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>pn</span><span class=o>.</span><span class=n>Row</span><span class=p>(</span> <span class=n>file_input</span><span class=p>,</span> <span class=n>button_load</span><span class=p>,</span> <span class=n>bound_button_load</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>    <span class=n>pn</span><span class=o>.</span><span class=n>Row</span><span class=p>(</span> <span class=n>button_clearhistory</span><span class=p>,</span> <span class=n>pn</span><span class=o>.</span><span class=n>pane</span><span class=o>.</span><span class=n>Markdown</span><span class=p>(</span><span class=s2>&#34;Clears chat history. Can use to start a new topic&#34;</span> <span class=p>)),</span>
+</span></span><span class=line><span class=cl>    <span class=n>pn</span><span class=o>.</span><span class=n>layout</span><span class=o>.</span><span class=n>Divider</span><span class=p>(),</span>
+</span></span><span class=line><span class=cl>    <span class=n>pn</span><span class=o>.</span><span class=n>Row</span><span class=p>(</span><span class=n>jpg_pane</span><span class=o>.</span><span class=n>clone</span><span class=p>(</span><span class=n>width</span><span class=o>=</span><span class=mi>400</span><span class=p>))</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>dashboard</span> <span class=o>=</span> <span class=n>pn</span><span class=o>.</span><span class=n>Column</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>pn</span><span class=o>.</span><span class=n>Row</span><span class=p>(</span><span class=n>pn</span><span class=o>.</span><span class=n>pane</span><span class=o>.</span><span class=n>Markdown</span><span class=p>(</span><span class=s1>&#39;# ChatWithYourData_Bot&#39;</span><span class=p>)),</span>
+</span></span><span class=line><span class=cl>    <span class=n>pn</span><span class=o>.</span><span class=n>Tabs</span><span class=p>((</span><span class=s1>&#39;Conversation&#39;</span><span class=p>,</span> <span class=n>tab1</span><span class=p>),</span> <span class=p>(</span><span class=s1>&#39;Database&#39;</span><span class=p>,</span> <span class=n>tab2</span><span class=p>),</span> <span class=p>(</span><span class=s1>&#39;Chat History&#39;</span><span class=p>,</span> <span class=n>tab3</span><span class=p>),(</span><span class=s1>&#39;Configure&#39;</span><span class=p>,</span> <span class=n>tab4</span><span class=p>))</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>dashboard</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=步骤12在运行起来的用户界面上进行实际的问答对话>步骤12：在运行起来的用户界面上进行实际的问答对话。</h3></section><footer class=article-footer><section class=article-tags><a href=/tags/langchain/>LangChain</a></section><section class=article-copyright><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><path d="M14.5 9a3.5 4 0 100 6"/></svg><span>Licensed under CC BY-NC-SA 4.0</span></section></footer><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/katex.min.css integrity="sha256-J+iAE0sgH8QSz9hpcDxXIftnj65JEZgNhGcgReTTK9s=" crossorigin=anonymous><script src=https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/katex.min.js integrity="sha256-InsNdER1b2xUewP+pKCUJpkhiqwHgqiPXDlIk7GzBu4=" crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/contrib/auto-render.min.js integrity="sha256-y39Mpg7V3D4lhBX4x6O0bUqTV4pSrfgwEfGKfxkOdgI=" crossorigin=anonymous defer></script><script>window.addEventListener("DOMContentLoaded",()=>{renderMathInElement(document.querySelector(`.article-content`),{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1},{left:"\\(",right:"\\)",display:!1},{left:"\\[",right:"\\]",display:!0}]})})</script></article><aside class=related-content--wrapper><h2 class=section-title>相关文章</h2><div class=related-content><div class="flex article-list--tile"><article><a href=/p/ii-%E5%9F%BA%E4%BA%8Elangchain%E7%9A%84%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91%E4%B8%8B/><div class=article-details><h2 class=article-title>II: 基于LangChain的大语言模型应用开发(下)</h2></div></a></article><article><a href=/p/i-%E5%9F%BA%E4%BA%8Elangchain%E7%9A%84%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91%E4%B8%8A/><div class=article-details><h2 class=article-title>I: 基于LangChain的大语言模型应用开发(上)</h2></div></a></article><article><a href=/p/i-%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E9%89%B4%E8%B5%8F/><div class=article-details><h2 class=article-title>I: 向量数据库技术鉴赏</h2></div></a></article></div></div></aside><footer class=site-footer><section class=copyright>&copy;
+2023 importzhh的小破站</section><section class=powerby>Built with <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a><br>主题 <b><a href=https://github.com/CaiJimmy/hugo-theme-stack target=_blank rel=noopener data-version=3.16.0>Stack</a></b> 由 <a href=https://jimmycai.com target=_blank rel=noopener>Jimmy</a> 设计</section></footer><div class=pswp tabindex=-1 role=dialog aria-hidden=true><div class=pswp__bg></div><div class=pswp__scroll-wrap><div class=pswp__container><div class=pswp__item></div><div class=pswp__item></div><div class=pswp__item></div></div><div class="pswp__ui pswp__ui--hidden"><div class=pswp__top-bar><div class=pswp__counter></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<button class="pswp__button pswp__button--share" title=Share></button>
+<button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button><div class=pswp__preloader><div class=pswp__preloader__icn><div class=pswp__preloader__cut><div class=pswp__preloader__donut></div></div></div></div></div><div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"><div class=pswp__share-tooltip></div></div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)"></button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class=pswp__caption><div class=pswp__caption__center></div></div></div></div></div><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo=" crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU=" crossorigin=anonymous defer></script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css crossorigin=anonymous><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css crossorigin=anonymous></main></div><script src=https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z+KMkF24hUW8WePSA9HM=" crossorigin=anonymous></script><script type=text/javascript src=/ts/main.js defer></script>
+<script>(function(){const e=document.createElement("link");e.href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap",e.type="text/css",e.rel="stylesheet",document.head.appendChild(e)})()</script></body></html>

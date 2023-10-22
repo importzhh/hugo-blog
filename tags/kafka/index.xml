@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>kafka on importzhh的小破站</title><link>https://blog.importzhh.me/tags/kafka/</link><description>Recent content in kafka on importzhh的小破站</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sun, 03 Sep 2023 16:09:47 +0800</lastBuildDate><atom:link href="https://blog.importzhh.me/tags/kafka/index.xml" rel="self" type="application/rss+xml"/><item><title>kafka 基础配置</title><link>https://blog.importzhh.me/p/kafka-%E5%9F%BA%E7%A1%80%E9%85%8D%E7%BD%AE/</link><pubDate>Sun, 03 Sep 2023 16:09:47 +0800</pubDate><guid>https://blog.importzhh.me/p/kafka-%E5%9F%BA%E7%A1%80%E9%85%8D%E7%BD%AE/</guid><description>&lt;h2 id="软件版本">软件版本&lt;/h2>
+&lt;p>&lt;a class="link" href="http://archive.apache.org/dist/kafka/2.4.0/kafka_2.12-2.4.0.tgz" target="_blank" rel="noopener"
+>kafka_2.12-2.4.0.tgz（带zookeeper）&lt;/a>&lt;/p>
+&lt;h2 id="服务端部署">服务端部署&lt;/h2>
+&lt;h3 id="修改kafka配置文件-serverproperties">修改kafka配置文件 server.properties&lt;/h3>
+&lt;p>&lt;strong>vim /data/kafka/config/server.properties:&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt"> 10
+&lt;/span>&lt;span class="lnt"> 11
+&lt;/span>&lt;span class="lnt"> 12
+&lt;/span>&lt;span class="lnt"> 13
+&lt;/span>&lt;span class="lnt"> 14
+&lt;/span>&lt;span class="lnt"> 15
+&lt;/span>&lt;span class="lnt"> 16
+&lt;/span>&lt;span class="lnt"> 17
+&lt;/span>&lt;span class="lnt"> 18
+&lt;/span>&lt;span class="lnt"> 19
+&lt;/span>&lt;span class="lnt"> 20
+&lt;/span>&lt;span class="lnt"> 21
+&lt;/span>&lt;span class="lnt"> 22
+&lt;/span>&lt;span class="lnt"> 23
+&lt;/span>&lt;span class="lnt"> 24
+&lt;/span>&lt;span class="lnt"> 25
+&lt;/span>&lt;span class="lnt"> 26
+&lt;/span>&lt;span class="lnt"> 27
+&lt;/span>&lt;span class="lnt"> 28
+&lt;/span>&lt;span class="lnt"> 29
+&lt;/span>&lt;span class="lnt"> 30
+&lt;/span>&lt;span class="lnt"> 31
+&lt;/span>&lt;span class="lnt"> 32
+&lt;/span>&lt;span class="lnt"> 33
+&lt;/span>&lt;span class="lnt"> 34
+&lt;/span>&lt;span class="lnt"> 35
+&lt;/span>&lt;span class="lnt"> 36
+&lt;/span>&lt;span class="lnt"> 37
+&lt;/span>&lt;span class="lnt"> 38
+&lt;/span>&lt;span class="lnt"> 39
+&lt;/span>&lt;span class="lnt"> 40
+&lt;/span>&lt;span class="lnt"> 41
+&lt;/span>&lt;span class="lnt"> 42
+&lt;/span>&lt;span class="lnt"> 43
+&lt;/span>&lt;span class="lnt"> 44
+&lt;/span>&lt;span class="lnt"> 45
+&lt;/span>&lt;span class="lnt"> 46
+&lt;/span>&lt;span class="lnt"> 47
+&lt;/span>&lt;span class="lnt"> 48
+&lt;/span>&lt;span class="lnt"> 49
+&lt;/span>&lt;span class="lnt"> 50
+&lt;/span>&lt;span class="lnt"> 51
+&lt;/span>&lt;span class="lnt"> 52
+&lt;/span>&lt;span class="lnt"> 53
+&lt;/span>&lt;span class="lnt"> 54
+&lt;/span>&lt;span class="lnt"> 55
+&lt;/span>&lt;span class="lnt"> 56
+&lt;/span>&lt;span class="lnt"> 57
+&lt;/span>&lt;span class="lnt"> 58
+&lt;/span>&lt;span class="lnt"> 59
+&lt;/span>&lt;span class="lnt"> 60
+&lt;/span>&lt;span class="lnt"> 61
+&lt;/span>&lt;span class="lnt"> 62
+&lt;/span>&lt;span class="lnt"> 63
+&lt;/span>&lt;span class="lnt"> 64
+&lt;/span>&lt;span class="lnt"> 65
+&lt;/span>&lt;span class="lnt"> 66
+&lt;/span>&lt;span class="lnt"> 67
+&lt;/span>&lt;span class="lnt"> 68
+&lt;/span>&lt;span class="lnt"> 69
+&lt;/span>&lt;span class="lnt"> 70
+&lt;/span>&lt;span class="lnt"> 71
+&lt;/span>&lt;span class="lnt"> 72
+&lt;/span>&lt;span class="lnt"> 73
+&lt;/span>&lt;span class="lnt"> 74
+&lt;/span>&lt;span class="lnt"> 75
+&lt;/span>&lt;span class="lnt"> 76
+&lt;/span>&lt;span class="lnt"> 77
+&lt;/span>&lt;span class="lnt"> 78
+&lt;/span>&lt;span class="lnt"> 79
+&lt;/span>&lt;span class="lnt"> 80
+&lt;/span>&lt;span class="lnt"> 81
+&lt;/span>&lt;span class="lnt"> 82
+&lt;/span>&lt;span class="lnt"> 83
+&lt;/span>&lt;span class="lnt"> 84
+&lt;/span>&lt;span class="lnt"> 85
+&lt;/span>&lt;span class="lnt"> 86
+&lt;/span>&lt;span class="lnt"> 87
+&lt;/span>&lt;span class="lnt"> 88
+&lt;/span>&lt;span class="lnt"> 89
+&lt;/span>&lt;span class="lnt"> 90
+&lt;/span>&lt;span class="lnt"> 91
+&lt;/span>&lt;span class="lnt"> 92
+&lt;/span>&lt;span class="lnt"> 93
+&lt;/span>&lt;span class="lnt"> 94
+&lt;/span>&lt;span class="lnt"> 95
+&lt;/span>&lt;span class="lnt"> 96
+&lt;/span>&lt;span class="lnt"> 97
+&lt;/span>&lt;span class="lnt"> 98
+&lt;/span>&lt;span class="lnt"> 99
+&lt;/span>&lt;span class="lnt">100
+&lt;/span>&lt;span class="lnt">101
+&lt;/span>&lt;span class="lnt">102
+&lt;/span>&lt;span class="lnt">103
+&lt;/span>&lt;span class="lnt">104
+&lt;/span>&lt;span class="lnt">105
+&lt;/span>&lt;span class="lnt">106
+&lt;/span>&lt;span class="lnt">107
+&lt;/span>&lt;span class="lnt">108
+&lt;/span>&lt;span class="lnt">109
+&lt;/span>&lt;span class="lnt">110
+&lt;/span>&lt;span class="lnt">111
+&lt;/span>&lt;span class="lnt">112
+&lt;/span>&lt;span class="lnt">113
+&lt;/span>&lt;span class="lnt">114
+&lt;/span>&lt;span class="lnt">115
+&lt;/span>&lt;span class="lnt">116
+&lt;/span>&lt;span class="lnt">117
+&lt;/span>&lt;span class="lnt">118
+&lt;/span>&lt;span class="lnt">119
+&lt;/span>&lt;span class="lnt">120
+&lt;/span>&lt;span class="lnt">121
+&lt;/span>&lt;span class="lnt">122
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl"># Kafka broker的唯一标识符，每个broker在集群中必须有个唯一的ID。
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">broker.id=0
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># 监听相关参数
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">1steners SASLPLAINTEXT://192.168.1.131:9092
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">advertised.1fsteners=SASL_PLAINTEXT://192.168.1.131:9092
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># 主题相关参数
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># 禁止自动创建主题
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">auto.create.topics.enable=false
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># 启用删除topic功能
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">delete.topic.enable=true
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># 默认值1。当该副本所在的brker机，consumer_offsets 只有一份副本，该分区岩机。使用该分区存储消费分组offset位置的消费者均会收到影响，offset无法提交，从而导致生产者可以发送消息但消费者不可用。所以需要设置该字段的值大于1
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">offsets.topic.replication.factor=3
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># 事务主题的复制因子(设置更高一确保可用性) 设置为节点数 内部主题创建将失败，直到集群大小满足此复制因素要求
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">transaction.state.log.replication.factor=3
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># 覆盖事务主题的min.insync.replicas配置。设置为(节点数+1)/2
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">transaction.state.log.min.isr=2
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># Kafka ISR 列表中最小同步副本数。设置为(节点数+1)/2
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">min.insync.replicas=2
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># 事务最大超时时间默认60000ms
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">transaction.max.timeout.ms=900000
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># 默认副本因子
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">default.replication.factor=3
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># 线程相关参数
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># 后台处理任务的线程数，如果不出问题，默认不修改默认10
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">background.threads=10
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># 处理磁盘IO的线程数量 默认8
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">num.io.threads=8
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># 处理网络请求的线程数量 默认3
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">num.network.threads=
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># 在启动时用于日志恢复和在关闭时刷新的每个数据目录的线程数默认1
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">num.recovery.threads.per.data.dir=1
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># 用于复制来自源代理的消息线程的数量 默认1 增加该值可以增加 follower broker 中的 I/O 平行度的程度。
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">queued.max.requests=500
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># 默认值500 用于控制生产者在发送请求的时候可以排队等待的最大请求数量 如果生产者发送请求的速度超过了服务器处理请求的速度，未发送的请求将积压在生产者的队列中
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">queued.max.requests=500
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># 发送套接字的缓冲区大小
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">socket.send.buffer.bytes=104857600
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># 接受套接字的缓冲区大小
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">socket.receive.buffer.bytes=104857600
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># 请求套接字的缓冲区大小
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">socket.request.max.bytes=104857600
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">#压缩相关参数 默认producer 意为和producer端的压缩格式保持一致
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">compression.type=producer
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># zookeeper相关参数
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">zookeeper.connection.timeout.ms=6000
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">zockeeper.sync.time.ms=2000 zookeeper.connect=192.168.1.112:2181,192.168.1.111:2181,192.168.1.110:2181/kafka
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># 重平衡相关参数
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># Unclean Leader Election指在Kafka集群leader节点失败时,新选举出来的leader节点可能还没有获得全部partition的最新offset数据,这时候新leader就是一个“脏”leader。
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># 正常情况下,Kafka会等待新leader从其他副本那里同步完毕数据后,才会开始作为leader提供服务。
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># 但开启脏选举功能后,即使数据同步未完成,新选举出来的leader也会直接开始提供服务,这可能会导致一部分数据丢失。
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">unclean.leader.election.enable=false
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># 禁止自动重平衡
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">auto.leader.rebalance.enable=false
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># 检查各个分区是否平衡的频率 默认300s
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">leader.imbalance.check.interval.seconds=30
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># 触发重平衡的阈值百分比 默认为10
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">group.initial.rebalance.delay.ms=10000
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># 日志刷写相关参数 暂不更改
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">log.dirs=/applog/kafka/logs
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># segment文件保备的最长时间，超时将被删除 默认7天168
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">log.retention.hours=168
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># 日志滚动切片相关参数
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># 日志滚动的最大时长，默认7天
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">log.roll.hours=48
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># 给日志段的切分加一个扰动值，默认为0 避免大量日志段在同一时间进行切分操作 如果发现kafka有周期性的磁盘I/O打满情况，建议设置此值。
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">log.roll.jitter.hours=2
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># 元数据相关参数
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># 副本相关参数暂不更改
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># 默认值500 follower副本发出的每个获取器请求的最大等待时间。该值在任何时候都应该小于replica.lag.time.max.ms，以防止低吞吐量主题的ISR频繁收缩
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">replica.fetch.wait.max.ms=500
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># 默认值5000 将高水位保存到磁盘的频率
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">replica.high.watermark.checkpoint.interval.ms=5000
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># 默认值30000 如果follower没有发送任何fetch请求，或者没有消耗leader将从ISR中删除follower
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">replica.log.time.max.ms=30000
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># 默认值65536 用于网络请求的套接字接收缓冲区
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">replica.socket.receive.buffer.bvtes=65536
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># 网络请求的套接字超时。它的值至少应该是 replica.fetch.wait.max.ms
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">replica.socket.timeout.ms=30000
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># 定义副本节点与领导者leader节点之间的最大复制滞后时间表示在副本节点从领导者节点获取数据之前可以容忍的最大时间延迟
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">repiica.1aq.time.max.ms=10000
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># 消息相关参数
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">message.max.bytes=10485760
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">replica.fetch.max.bvtes=10485760
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">log.message.timestamp.type=CreateTime
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># 默认1000 这个参数暂定 较小的值可以提高请求处理效率但增大清理操作的开销
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">fetch.purgatory.purge.interval.requests=100
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># 权限配置
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">allow.everyone.if.no.acl.found=true
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">authorizer.class.name=kafka.security.auth.SimpleAclAuthorizer
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">security.inter.broker.protocol=SASL_PLAINTEXT
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">sasl.mechanism.inter.broker.protocol=SCRAM-SHA-256
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">sasl.enabled.mechanisms=SCRAM-SHA-256
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">super.users=User:admin
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="添加sasl配置文件">添加SASL配置文件&lt;/h3>
+&lt;p>在配置目录下创建一个 kafka_server_jaas.conf 文件&lt;br>
+** vim kafka_server_jaas.conf: **&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;span class="lnt">8
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">KafkaServer {
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> org.apache.kafka.common.security.scram.ScramLoginModule required
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> username=&amp;#34;admin&amp;#34;
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> password=&amp;#34;admin&amp;#34;
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> user_admin=&amp;#34;admin&amp;#34;
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> user_producer=&amp;#34;pwd1&amp;#34;
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> user_consumer=&amp;#34;pwd2&amp;#34;;
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">};
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>基本语法注意事项：
+第一行：固定名称指定 KafkaServer 端的配置。
+第二行：安全认证类名为 ScramLoginModule，与 Kafka 属性文件中的协议类型一致。
+第三、四行：服务端使用的帐号和密码。
+第五行，超管帐号的密码。
+后面都是预设普通帐号认证信息，语法为 user_真正的用户名=&amp;lsquo;&amp;lsquo;密码&amp;quot;
+最后一行用户名密码定义后，必须以分号 ; 结尾。&lt;/p>
+&lt;h3 id="24-修改启动脚本">2.4 修改启动脚本&lt;/h3>
+&lt;p>vim bin/kafka-server-start.sh ，找到 &lt;strong>export KAFKA_HEAP_OPTS&lt;/strong> , 添加jvm 文件：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-gdscript3" data-lang="gdscript3">&lt;span class="line">&lt;span class="cl">&lt;span class="k">export&lt;/span> &lt;span class="n">KAFKA_HEAP_OPTS&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s2">&amp;#34;-Xmx6G -Xms6G -Djava.security.auth.login.config=/approot/kafka/config/kafka_server_jaas.conf&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="25-启动kafka服务">2.5 启动kafka服务&lt;/h3>
+&lt;p>向 Zookeeper 注册 kafka_server_jaas.conf 文件中定义的各个用户的密码&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">bin/kafka-configs.sh --zookeeper localhost:2181 --alter --add-config &lt;span class="s1">&amp;#39;SCRAM-SHA-256=[password=admin]&amp;#39;&lt;/span> --entity-type users --entity-name admin
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>这一步必须配置，否则启动 Kafka 的时候会报错：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">/approot/kafka/bin/kafka-server-start.sh -daemon /approot/kafka/config/server.properties
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="kafka客户端配置登录认证">kafka客户端配置登录认证&lt;/h2>
+&lt;h3 id="创建客户端认证配置文件">创建客户端认证配置文件&lt;/h3>
+&lt;p>在配置目录下创建一个 producer.conf 文件：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">security.protocol=SASL_PLAINTEXT
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">sasl.mechanism=SCRAM-SHA-256
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username=&amp;#34;producer&amp;#34; password=&amp;#34;pwd1&amp;#34;;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>测试命令&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">bin/kafka-console-producer.sh --broker-list localhost:9092 --topic &lt;span class="nb">test&lt;/span> --producer.config /approot/kafka/config/producer.conf
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>在配置目录下创建一个 consumer.conf 文件：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">security.protocol&lt;span class="o">=&lt;/span>SASL_PLAINTEXT
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">sasl.mechanism&lt;span class="o">=&lt;/span>SCRAM-SHA-256
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">sasl.jaas.config&lt;span class="o">=&lt;/span>org.apache.kafka.common.security.scram.ScramLoginModule required &lt;span class="nv">username&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s2">&amp;#34;consumer&amp;#34;&lt;/span> &lt;span class="nv">password&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s2">&amp;#34;pwd2&amp;#34;&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div></description></item></channel></rss>
